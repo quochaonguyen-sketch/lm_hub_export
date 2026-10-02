@@ -1,0 +1,4 @@
+﻿station_id,station_name,event_date_iso,scheduled_count,present_count,late_count,fte_count,os_count,bpo_count,attendance_pct,fetched_at
+912,50-HCM Binh Thanh/VTB Hub,2026-10-02,11,6,0,9,0,2,54.55,2026-10-02 13:15:13
+2107,51-HCM D9/Phu Huu Hub,2026-10-02,4,3,0,4,0,0,75.0,2026-10-02 13:15:13
+5742,54-HCM FM 01 Hub,2026-10-02,63,43,0,42,0,21,68.25,2026-10-02 13:15:14

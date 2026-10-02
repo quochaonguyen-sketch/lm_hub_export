@@ -1,0 +1,135 @@
+station_id,station_name
+302,50-HCM Binh Chanh/Le Minh Xuan Hub
+91,50-HCM Binh Chanh/Phong Phu Hub
+1047,50-HCM Binh Chanh/Tan Tuc Hub
+166,50-HCM Binh Chanh/Vinh Loc Hub
+41,50-HCM Binh Tan Hub
+917,50-HCM Binh Tan/An Lac Hub
+912,50-HCM Binh Thanh/VTB Hub
+384,50-HCM Can Gio Hub
+304,50-HCM Cu Chi Hub
+381,50-HCM D11 Hub
+397,50-HCM D12/An Suong Hub
+168,50-HCM D2 Hub
+573,50-HCM D2/An Phu Hub
+26,50-HCM D4 Hub
+341,50-HCM D6 Hub
+58,50-HCM D7 Hub
+25,50-HCM D8 Hub
+979,50-HCM D9/Duong Dinh Hoi Hub
+919,50-HCM D9/Man Thien Hub
+370,50-HCM D9/Truong Thanh Hub
+196,50-HCM Nha Be Hub
+393,50-HCM Phu Nhuan/Phuong 4 Hub
+444,50-HCM Phu Nhuan/Phuong 8 Hub
+915,50-HCM Tan Binh/Bach Dang Hub
+1082,50-HCM Tan Phu/Tan Quy Hub
+10,50-HCM Thu Duc Hub
+423,50-HCM Thu Duc/Hiep Binh Phuoc Hub
+93,50-HCM Thu Duc/Linh Trung Hub
+5420,51-HCM Bay Hien/Tai Thiet Hub
+2177,51-HCM Binh Chanh/Binh Hung Hub
+4719,51-HCM Binh Chanh/Tan Quy Tay Hub
+4628,51-HCM Binh Chanh/Tan Vinh Loc Hub
+2440,51-HCM Binh Chanh/Tran Van Giau Hub
+2011,51-HCM Binh Chanh/Vinh Loc A Hub
+1877,51-HCM Binh Tan/Binh Hung Hoa B Hub
+2053,51-HCM Binh Tan/Binh Tri Dong A Hub
+5036,51-HCM Binh Tan/Binh Tri Dong B Hub
+5419,51-HCM Binh Tan/Nguyen Thi Tu Hub
+5876,51-HCM Binh Thanh/Binh Loi Trung Hub
+5661,51-HCM Binh Thanh/Binh Quoi Hub
+6143,51-HCM Binh Thanh/Phan Van Tri Hub
+2095,51-HCM Binh Thanh/Phuong 12 Hub
+5731,51-HCM Can Gio/Binh Khanh Hub
+2442,51-HCM Cu Chi/Binh My Hub
+2199,51-HCM Cu Chi/Phuoc Hiep Hub
+6164,51-HCM Cu Chi/Tan An Hoi Hub
+2149,51-HCM Cu Chi/Tan Phu Trung Hub
+1387,51-HCM Cu Chi/Tan Thanh Dong Hub
+1390,51-HCM Cu Chi/Trung Lap Thuong Hub
+4228,51-HCM D10/Dien Hong Hub
+4625,51-HCM D10/Hoa Hung Hub
+5039,51-HCM D10/Truong Son Hub
+4293,51-HCM D11/Binh Thoi Hub
+2318,51-HCM D11/Phuong 15 Hub
+2421,51-HCM D12/Dong Hung Thuan Hub
+2396,51-HCM D12/Le Thi Rieng Hub
+2316,51-HCM D12/Le Van Khuong Hub
+4785,51-HCM D12/Nguyen Van Qua Hub
+1872,51-HCM D12/Thanh Loc Hub
+2260,51-HCM D12/Thanh Xuan Hub
+1808,51-HCM D12/Thoi An Hub
+5662,51-HCM D12/Vuon Lai Hub
+2110,51-HCM D2/An Khanh Hub
+2020,51-HCM D2/Cat Lai Hub
+2453,51-HCM D2/Thao Dien Hub
+5798,51-HCM D3/Ban Co Hub
+4623,51-HCM D3/Nhieu Loc Hub
+5422,51-HCM D6/Kinh Duong Vuong Hub
+2473,51-HCM D7/Bui Van Ba Hub
+2063,51-HCM D7/Dao Tri Hub
+2021,51-HCM D7/Huynh Tan Phat Hub
+2109,51-HCM D7/Nguyen Van Linh Hub
+2191,51-HCM D7/Tan Kieng Hub
+4439,51-HCM D8/Ben Binh Dong Hub
+2190,51-HCM D8/Bui Minh Truc Hub
+6087,51-HCM D8/KDC Binh Hung Hub
+6479,51-HCM D8/Pham The Hien Hub
+5120,51-HCM D8/Phu Dinh Hub
+2317,51-HCM D8/Tung Thien Vuong Hub
+2108,51-HCM D9/Hoang Huu Nam Hub
+5418,51-HCM D9/Lien Phuong Hub
+2290,51-HCM D9/Long Binh Hub
+4626,51-HCM D9/Long Truong Hub
+2200,51-HCM D9/Nguyen Van Tang Hub
+2107,51-HCM D9/Phu Huu Hub
+2060,51-HCM D9/Phuoc Long B Hub
+2397,51-HCM D9/Tang Nhon Phu B Hub
+2443,51-HCM D9/Xa Lo Ha Noi Hub
+2061,51-HCM Go Vap/Le Duc Tho Hub
+4230,51-HCM Go Vap/Nguyen Van Khoi Hub
+2240,51-HCM Go Vap/Pham Van Chieu Hub
+2094,51-HCM Go Vap/Phan Huy Ich Hub
+2503,51-HCM Go Vap/Phuong 15 Hub
+2378,51-HCM Go Vap/Phuong 17 Hub
+4011,51-HCM Go Vap/Phuong 5 Hub
+4718,51-HCM Hoc Mon/Dong Thanh 1 Hub
+2055,51-HCM Hoc Mon/Dong Thanh Hub
+2288,51-HCM Hoc Mon/Nguyen Thi Soc Hub
+2139,51-HCM Hoc Mon/Tan Thoi Nhi Hub
+5981,51-HCM Hoc Mon/Thi Tran Hub
+4624,51-HCM Hoc Mon/Thoi Tam Thon Hub
+4012,51-HCM Hoc Mon/Xuan Thoi Son Hub
+1775,51-HCM Hoc Mon/Xuan Thoi Thuong Hub
+3986,51-HCM Le Hong Phong 02 CH
+5819,51-HCM Nha Be/Hiep Phuoc Hub
+2423,51-HCM Nha Be/Phu Xuan Hub
+2019,51-HCM Nha Be/Phuoc Kien Hub
+4627,51-HCM Phan Van Khoe CH
+2291,51-HCM Phu Nhuan/Phan Xich Long Hub
+2379,51-HCM Phu Nhuan/Truong Sa Hub
+4229,51-HCM PN/Cau Kieu Hub
+5023,51-HCM Tan Binh/Bay Hien Hub
+2238,51-HCM Tan Binh/Phuong 14 Hub
+4438,51-HCM Tan Binh/Tan Son Hoa Hub
+4940,51-HCM Tan Binh/Tan Son Nhat Hub
+5421,51-HCM Tan Binh/Truong Chinh Hub
+2883,51-HCM Tan Phu/Kenh Tan Hoa Hub
+2064,51-HCM Tan Phu/Le Trong Tan Hub
+2289,51-HCM Tan Phu/Phan Anh Hub
+2292,51-HCM Tan Phu/Phu Tho Hoa Hub
+2452,51-HCM Tan Phu/Son Ky Hub
+2420,51-HCM Tan Phu/Tan Son Nhi Hub
+2422,51-HCM Tan Phu/Tan Thanh Hub
+2237,51-HCM Tan Phu/Tan Thoi Hoa Hub
+1866,51-HCM Thu Duc/Binh Chieu Hub
+2444,51-HCM Thu Duc/Hiep Binh Chanh Hub
+2239,51-HCM Thu Duc/Linh Dong Hub
+2241,51-HCM Thu Duc/Linh Xuan Hub
+2425,51-HCM Thu Duc/Ngo Chi Quoc Hub
+4232,52-HCM SDD-01 Hub
+5667,53-HCM Bulky 02 DC
+4297,53-HCM Bulky DC
+5815,53-HCM EV VAN
+5742,54-HCM FM 01 Hub

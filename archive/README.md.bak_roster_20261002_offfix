@@ -1,0 +1,182 @@
+# LM Hub Export (standalone)
+
+Thu muc **doc lap** - **khong** dung cookie / `paths` / `cookie_login` cua `C:\SPX_Launcher`
+(tru khi ban bat `--launcher-cookie`, OFF mac dinh).
+
+## Cau truc
+
+```
+C:\lm_hub_export\
+  export_lm_hubs.py              # entry
+  spx_cookies.py                 # doc cookie JSON + headers SPX
+  chrome_cookie_import.py / .bat # lay cookie tu Chrome
+  Huong_dan_cai_dat_va_chay.xlsx
+  README.md
+  run_test.bat                   # wrapper -> scripts\run_test.bat
+  data\
+    hubs.csv                     # danh sach station_id (mac dinh --hubs)
+    chrome_debug_profile\        # Chrome debug profile (cookie import)
+    smoke\                       # hub CSV nho cho smoke test
+  cookies\
+    README.txt
+    cookies.json                 # BAN TU COPY / import VAO DAY
+  output\                        # tat ca CSV export (mac dinh --out-dir)
+    archive\                     # smoke / junk CSV cu
+  scripts\
+    run_test.bat
+  archive\                       # bak script, _js_scan, CDP capture
+```
+
+## Cookie (khac launcher)
+
+| | Launcher | Pack nay |
+|--|----------|----------|
+| Path | `C:\SPX_Launcher\config\cookies\cookies_assign_pick.json` | `C:\lm_hub_export\cookies\cookies.json` |
+| Loader | `core/cookie_login.py` | `spx_cookies.py` (minimal) |
+| Refresh | Launcher **LAM MOI COOKIE** | Copy file cookie moi vao `cookies\cookies.json` |
+
+Format `cookies.json`: JSON **array** `[{name,value,domain,...}, ...]`, can co **`fms_user_skey`**.
+
+Vi du copy 1 lan (thu cong):
+
+```bat
+copy C:\SPX_Launcher\config\cookies\cookies_assign_pick.json C:\lm_hub_export\cookies\cookies.json
+```
+
+Hoac: `set LM_HUB_COOKIE_FILE=D:\path\cookies.json` / `--cookie-file ...`
+
+## Chay
+
+```bat
+cd /d C:\lm_hub_export
+run_test.bat
+```
+
+```bat
+py -3.14 export_lm_hubs.py --apis order_volume,backlog --out-suffix _full
+```
+
+Mac dinh: `--hubs data\hubs.csv`, `--out-dir output` (CSV ghi vao `output\`).
+
+## API (mac dinh)
+
+Mac dinh van la `order_volume,backlog`; FM / delivery_progress / roster chi chay khi them vao `--apis` (hoac `--apis all`).
+
+
+- **order_volume** -> `operation__lm_order_volume__10m_v4`
+  - body `{"station_id": int}`
+  - inbound = `lm_hub_inbounded_order_qty_eod`
+  - delivered = `lm_hub_delivered_order_qty_eod`
+- **backlog** -> `operation__lm_backlog__10m_v3`
+  - body `{"is_all": 0, "station_id": int}` (thieu is_all -> retcode -21001)
+
+Backlog CSV columns (in order): `station_id`, `station_name`, the nine allowlisted metrics below, and `fetched_at`.
+
+- `lm_hub_backlog_gte_1d_order_qty_td`
+- `lm_hub_leg_backlog_gte_1d_order_qty_td`
+- `lm_hub_to_deliver_backlog_eq_1d_order_qty_td` through `lm_hub_to_deliver_backlog_eq_6d_order_qty_td`
+- `lm_hub_to_deliver_backlog_gte_7d_order_qty_td`
+
+## API (FM order volume)
+
+- **fm_order_volume** -> `operation__fm_order_volume_hub__10m`
+  - body first tries `{"station_id": int}`
+  - if the response is `retcode=-21001`, retries with `{"is_all": 0, "station_id": int}`
+  - `data` is a **single object**, not a list
+  - CSV: **1 dong / hub** (`output\fm_order_volume_hubs_export.csv`)
+  - columns: `station_id`, `station_name`, `data_from_time`, `sla_flag`, `total_inbounded_order_qty_eoh`, `total_outbounded_order_qty_eoh`, `total_picked_order_qty_eoh`, `update_at_timestamp`, `fetched_at`
+
+Smoke test:
+
+```bat
+py -3.14 export_lm_hubs.py --apis fm_order_volume --hubs data\smoke\_hubs_smoke_fm.csv --out-suffix _smoke
+```
+
+## API (them)
+
+- **delivery_progress** -> `operation__lm_delivery_progress_all_fleets__10m_v3`
+  - body `{"station_id": int}` (giong order_volume)
+  - CSV: **1 dong / driver** (`data.list[]`), khong 1 dong / hub
+  - output: `output\lm_delivery_progress_export.csv` (+ `--out-suffix`)
+  - cot (allowlist, theo thu tu): `station_id`, `station_name`, `agency_name`, `contract_type`, `driver_id`, `driver_name`, `lm_hub_fleet_assigned_order_qty_td`, `lm_hub_fleet_delivered_order_qty_eod`, `lm_hub_fleet_delivered_pct_eod`, `lm_hub_fleet_delivering_in_system_order_qty_eod`, `lm_hub_fleet_failed_delivery_order_qty_eod`, `fetched_at`
+
+```bat
+py -3.14 export_lm_hubs.py --apis delivery_progress --hubs data\smoke\_hubs_smoke_dp.csv --out-suffix _smoke
+py -3.14 export_lm_hubs.py --apis order_volume,backlog,delivery_progress
+py -3.14 export_lm_hubs.py --apis fm_order_volume
+```
+
+## API (roster / event_list) — TODAY ONLY cooked
+
+- **roster** (alias **event_list**) combines 2 WFM APIs (path `/api/wfm/...`, **KHONG** data_api mart).
+- Auth: cung cookie pack (`cookies\cookies.json` / `spx_cookies.py`) — `fms_user_skey` + `csrftoken`.
+
+### 1) Event list (today Asia/Saigon)
+
+- `POST https://spx.shopee.vn/api/wfm/admin/roster_planning/event/event_list_v2`
+- body: `{"station_id": int, "event_type": 2, "event_date_from": unix, "event_date_to": unix, "department_id_list": [44, 43]}`
+- **Mac dinh TODAY ONLY**: `event_date_from = event_date_to = today_00:00` (Asia/Saigon).
+  - `from=to=today` tra ve dung 1 `event_day` (hom nay). Neu `to=tomorrow` se kem ca ngay mai — tool **khong** dung mac dinh do.
+- Override debug: `--date-from` / `--date-to` / `--event-type` (mac dinh 2).
+
+### 2) Staff list per event
+
+- `GET https://spx.shopee.vn/api/wfm/admin/roster_planning/event/event_add_staff_search?page_no=1&count=200&event_id=...&station_id=...`
+- Doc `data.total` + `data.event_staff_list[]` -> cot `staff_count`.
+
+### labor_type OS vs FTE
+
+- Co `event_list_agency_list` non-empty -> **OS**: cong `planned_headcount` / `actual_headcount` (va `scheduled_headcount` neu co) tren agency; `agency_id`/`agency_name` join bang `|`.
+- Khong co / rong -> **FTE**: dung `event.actual_headcount`, `event.scheduled_headcount`, `event.planned_headcount`.
+
+### Cooked metrics (assumptions)
+
+Clock-in/out tren staff API thuong **rong** (`clock_in_channel=0`, `clock_in_station_id=0`, `ops_calendar_info={}`). Do do:
+
+| Metric | Cong thuc |
+|--------|-----------|
+| `total_people` (tong so nguoi) | `scheduled_headcount` neu >0; else `planned_headcount`; else fallback `staff_count` |
+| `present_count` (so di lam) | `actual_headcount` |
+| `attendance_pct` (% di lam) | `100 * present / total` (blank neu total=0) |
+| `off_count` (so off) | dem staff `leave_pay_type != 0` (thuong = 0 khi leave rong) |
+| `not_yet_present_count` (chua co mat) | `max(0, total_people - present_count - off_count)` |
+
+`metric_notes` ghi assumption (`clock_fields_empty`, `total=scheduled_headcount`, ...).
+
+### CSV
+
+- Output: `output\roster_today_export.csv` (+ `--out-suffix`)
+- **grain=event**: 1 dong / event hom nay
+- **grain=hub**: 1 dong rollup / station (tong HC, % di lam hub)
+- Cot: `station_id`, `station_name`, `grain`, `event_date`, `event_date_iso`, `event_id`, `slot_code`, `slot_display`, `event_status`, `labor_type`, `agency_id`, `agency_name`, `scheduled_headcount`, `actual_headcount`, `planned_headcount`, `staff_count`, `total_people`, `present_count`, `attendance_pct`, `off_count`, `not_yet_present_count`, `event_department_id`, `event_department_name`, `metric_notes`, `fetched_at`
+
+Smoke:
+
+```bat
+py -3.14 export_lm_hubs.py --apis roster --hubs data\smoke\_hubs_smoke_roster.csv --out-suffix _smoke
+py -3.14 export_lm_hubs.py --apis event_list --hubs data\smoke\_hubs_smoke_roster.csv --out-suffix _smoke
+```
+
+
+Hub fail -> SKIP. Exit 0 neu >=1 OK. `--strict` = fail neu co skip.
+
+## Luu y
+
+- Can `requests` (`py -3.14 -m pip install requests`).
+- Khong sua cookie flow trong SPX_Launcher.
+
+## Cookie import (Chrome)
+
+spx_cookies.py = **loader** (doc cookie cho export).  
+chrome_cookie_import.py = **importer** (lay cookie tu Chrome).
+
+Refresh:
+
+```bat
+cd /d C:\lm_hub_export
+chrome_cookie_import.bat
+```
+
+Lenh khac: --cdp, --import-json FILE, --status, --dry-run.
+
+Ghi **chi** cookies\cookies.json. Khong sua cookie SPX_Launcher.

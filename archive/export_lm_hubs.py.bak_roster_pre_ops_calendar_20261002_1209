@@ -1,0 +1,1018 @@
+"""Standalone export SPX LM hub metrics (order_volume / backlog / delivery_progress / fm_order_volume / roster) -> CSV.
+
+Khong phu thuoc SPX_Launcher. Cookie: cookies/cookies.json (hoac --cookie-file /
+LM_HUB_COOKIE_FILE). Tuy chon --launcher-cookie de doc cookie launcher (OFF mac dinh).
+
+USAGE:
+  py -3.14 export_lm_hubs.py
+  py -3.14 export_lm_hubs.py --apis order_volume,backlog --out-suffix _test
+  py -3.14 export_lm_hubs.py --apis fm_order_volume --hubs data/smoke/_hubs_smoke_fm.csv --out-suffix _smoke
+  py -3.14 export_lm_hubs.py --apis roster --hubs data/smoke/_hubs_smoke_roster.csv --out-suffix _smoke
+  py -3.14 export_lm_hubs.py --apis roster   # today-only cooked CSV
+  py -3.14 export_lm_hubs.py --hubs data/hubs.csv --workers 4
+  py -3.14 export_lm_hubs.py --cookie-file cookies\\cookies.json
+  py -3.14 export_lm_hubs.py --launcher-cookie   # optional, OFF by default
+  scripts/run_test.bat
+
+APIs:
+  order_volume       operation__lm_order_volume__10m_v4
+                     body: {"station_id": int}
+                     inbound  = lm_hub_inbounded_order_qty_eod
+                     delivered= lm_hub_delivered_order_qty_eod
+  backlog            operation__lm_backlog__10m_v3
+                     body: {"is_all": 0, "station_id": int}   # is_all BAT BUOC (thieu -> retcode -21001)
+                     lm_hub_to_deliver_backlog_eq_1d..eq_6d / gte_7d, lm_hub_backlog_gte_1d, ...
+  delivery_progress  operation__lm_delivery_progress_all_fleets__10m_v3
+                     body: {"station_id": int}   # like order_volume
+                     CSV: ONE ROW PER DRIVER (data.list[]), not per hub
+  fm_order_volume     operation__fm_order_volume_hub__10m
+                     body: {"station_id": int}; retry {"is_all": 0, "station_id": int} on -21001
+                     data is one object; CSV is ONE ROW PER HUB
+  roster (alias: event_list)  TODAY-ONLY cooked export (Asia/Saigon)
+                     1) POST /api/wfm/admin/roster_planning/event/event_list_v2
+                        body: {station_id, event_type:2, event_date_from, event_date_to}
+                        default dates: today_00:00 .. today_00:00 (today only)
+                     2) GET  /api/wfm/admin/roster_planning/event/event_add_staff_search
+                        ?page_no=1&count=200&event_id=...&station_id=...
+                     OS if event_list_agency_list non-empty else FTE (actual/scheduled HC)
+                     CSV cooked: grain=event + grain=hub; HC + attendance_pct + off_count (staff search)
+
+Hub fail -> SKIP (khong ghi CSV). Exit 0 neu >=1 OK; exit 1 neu ALL fail.
+--strict: exit 1 neu co skip.
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import io
+import os
+import sys
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+from spx_cookies import CookieError, build_session, resolve_cookie_file
+
+PACK_ROOT = Path(__file__).resolve().parent
+API_BASE = (
+    "https://spx.shopee.vn/mgmt/api/pc/forward/data/api_mart/mgmt_app/data_api/"
+)
+# Roster / WFM uses a different path (NOT data_api mart).
+ROSTER_URL = (
+    "https://spx.shopee.vn/api/wfm/admin/roster_planning/event/event_list_v2"
+)
+ROSTER_STAFF_URL = (
+    "https://spx.shopee.vn/api/wfm/admin/roster_planning/event/event_add_staff_search"
+)
+# (endpoint_or_marker, default_csv_name, extract_mode, request_body_builder_name)
+API_SPECS = {
+    "order_volume": (
+        "operation__lm_order_volume__10m_v4",
+        "lm_order_volume_hubs_export.csv",
+        "list0",
+        "station_only",
+    ),
+    "backlog": (
+        "operation__lm_backlog__10m_v3",
+        "lm_backlog_hubs_export.csv",
+        "list0",
+        "backlog_is_all",
+    ),
+    "delivery_progress": (
+        "operation__lm_delivery_progress_all_fleets__10m_v3",
+        "lm_delivery_progress_export.csv",
+        "list_all",  # one CSV row per driver in data.list
+        "station_only",
+    ),
+    "fm_order_volume": (
+        "operation__fm_order_volume_hub__10m",
+        "fm_order_volume_hubs_export.csv",
+        "dict",  # one object directly under data
+        "fm_order_volume_probe",
+    ),
+    "roster": (
+        "event_list_v2",  # marker; real URL is ROSTER_URL
+        "roster_today_export.csv",
+        "roster_events",
+        "roster_dates",
+    ),
+}
+API_ALIASES = {
+    "event_list": "roster",
+}
+DEFAULT_APIS = ("order_volume", "backlog")
+DEFAULT_HUBS = PACK_ROOT / "data" / "hubs.csv"
+DEFAULT_OUT_DIR = PACK_ROOT / "output"
+LAUNCHER_COOKIE = Path(
+    r"C:\SPX_Launcher\config\cookies\cookies_assign_pick.json"
+)
+TZ = timezone(timedelta(hours=7))
+
+ORDER_VOLUME_KEY_METRICS = (
+    "lm_hub_inbounded_order_qty_eod",
+    "lm_hub_delivered_order_qty_eod",
+)
+# Exact backlog CSV allowlist. Keep identity columns and fetched_at in write_csv.
+BACKLOG_KEY_METRICS = (
+    "lm_hub_backlog_gte_1d_order_qty_td",
+    "lm_hub_leg_backlog_gte_1d_order_qty_td",
+    "lm_hub_to_deliver_backlog_eq_1d_order_qty_td",
+    "lm_hub_to_deliver_backlog_eq_2d_order_qty_td",
+    "lm_hub_to_deliver_backlog_eq_3d_order_qty_td",
+    "lm_hub_to_deliver_backlog_eq_4d_order_qty_td",
+    "lm_hub_to_deliver_backlog_eq_5d_order_qty_td",
+    "lm_hub_to_deliver_backlog_eq_6d_order_qty_td",
+    "lm_hub_to_deliver_backlog_gte_7d_order_qty_td",
+)
+
+
+# Exact delivery_progress CSV allowlist. Keep identity columns, metrics, and fetched_at in write_csv.
+DELIVERY_PROGRESS_KEY_METRICS = (
+    "agency_name",
+    "contract_type",
+    "driver_id",
+    "driver_name",
+    "lm_hub_fleet_assigned_order_qty_td",
+    "lm_hub_fleet_delivered_order_qty_eod",
+    "lm_hub_fleet_delivered_pct_eod",
+    "lm_hub_fleet_delivering_in_system_order_qty_eod",
+    "lm_hub_fleet_failed_delivery_order_qty_eod",
+)
+
+FM_ORDER_VOLUME_KEY_METRICS = (
+    "data_from_time",
+    "sla_flag",
+    "total_inbounded_order_qty_eoh",
+    "total_outbounded_order_qty_eoh",
+    "total_picked_order_qty_eoh",
+    "update_at_timestamp",
+)
+
+# Roster today cooked CSV allowlist (identity + fetched_at added in write_csv).
+ROSTER_KEY_METRICS = (
+    # After drops. Dropped CSV cols: event_date, event_id, slot_display, event_status,
+    # agency_id, staff_count, total_people, present_count, not_yet_present_count,
+    # event_department_id, metric_notes.
+    "grain",  # event | hub
+    "event_date_iso",
+    "slot_code",
+    "labor_type",
+    "agency_name",
+    "scheduled_headcount",
+    "actual_headcount",
+    "planned_headcount",
+    "attendance_pct",
+    "off_count",
+    "event_department_name",
+)
+
+
+def default_roster_date_range():
+    """Today-only roster window in Asia/Saigon midnight unix seconds.
+
+    Returns (today_00:00, today_00:00) so event_list_v2 returns only today's
+    event_day. Override with --date-from/--date-to for debug. event_type default 2.
+
+    Note: from=today, to=tomorrow would also return tomorrow's day; we use
+    from=to=today to keep TODAY ONLY.
+    """
+    now = datetime.now(TZ)
+    mid = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    today = int(mid.timestamp())
+    return today, today
+
+
+def _unix_to_iso_saigon(ts):
+    try:
+        return datetime.fromtimestamp(int(ts), TZ).strftime("%Y-%m-%d")
+    except Exception:
+        return ""
+
+
+def build_request_body(api_key, station_id):
+    """Return JSON body for API POST.
+
+    backlog REQUIRES is_all (browser sends {"is_all": 0}); station_id alone -> -21001.
+    roster REQUIRES event_type + event_date_from + event_date_to (WFM path, not data_api).
+    """
+    _ep, _name, _mode, body_kind = API_SPECS[api_key]
+    sid = int(station_id)
+    if body_kind == "backlog_is_all":
+        return {"is_all": 0, "station_id": sid}
+    if body_kind == "roster_dates":
+        return {
+            "station_id": sid,
+            "event_type": int(_ROSTER_EVENT_TYPE),
+            "event_date_from": int(_ROSTER_DATE_FROM),
+            "event_date_to": int(_ROSTER_DATE_TO),
+            "department_id_list": list(_ROSTER_DEPARTMENT_ID_LIST),
+        }
+    # station_only and fm_order_volume_probe start with station_id only.
+    return {"station_id": sid}
+
+
+def load_hubs(path):
+    text_lines = []
+    with open(path, "r", encoding="utf-8-sig") as handle:
+        for line in handle:
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            if all(ch in ",;\t " for ch in stripped):
+                continue
+            text_lines.append(stripped)
+    if not text_lines:
+        raise SystemExit("Hubs CSV rong: %s" % path)
+
+    header_idx = None
+    for idx, line in enumerate(text_lines):
+        cols = [c.strip().lower() for c in next(csv.reader([line]))]
+        if "station_id" in cols:
+            header_idx = idx
+            break
+    if header_idx is None:
+        raise SystemExit("Hubs CSV thieu cot station_id: %s" % path)
+    text_lines = text_lines[header_idx:]
+
+    reader = csv.DictReader(io.StringIO("\n".join(text_lines)))
+    field_map = {name.strip().lower(): name for name in (reader.fieldnames or [])}
+    if "station_id" not in field_map:
+        raise SystemExit("Hubs CSV thieu cot station_id: %s" % path)
+    sid_key = field_map["station_id"]
+    name_key = field_map.get("station_name")
+
+    hubs = []
+    for row in reader:
+        raw = str(row.get(sid_key) or "").strip()
+        if not raw:
+            continue
+        try:
+            station_id = int(raw)
+        except ValueError:
+            print("Bo qua station_id khong hop le: %r" % raw, flush=True)
+            continue
+        station_name = str(row.get(name_key) or "").strip() if name_key else ""
+        hubs.append({"station_id": station_id, "station_name": station_name})
+    if not hubs:
+        raise SystemExit("Khong co station_id hop le trong: %s" % path)
+    return hubs
+
+
+def parse_apis(value):
+    raw = (value or "").strip()
+    if not raw or raw.lower() == "all":
+        chosen = list(API_SPECS.keys()) if raw.lower() == "all" else list(DEFAULT_APIS)
+    else:
+        chosen = []
+        for part in raw.split(","):
+            key = part.strip().lower()
+            if not key:
+                continue
+            key = API_ALIASES.get(key, key)
+            if key not in API_SPECS:
+                raise SystemExit(
+                    "API khong hop le: %r. Chon: %s | all (alias: event_list=roster)"
+                    % (part.strip(), ", ".join(API_SPECS))
+                )
+            if key not in chosen:
+                chosen.append(key)
+    if not chosen:
+        chosen = list(DEFAULT_APIS)
+    order = {k: i for i, k in enumerate(API_SPECS)}
+    chosen.sort(key=lambda k: order[k])
+    return tuple(chosen)
+
+
+_tls = threading.local()
+_COOKIE_FILE = None
+_ROSTER_DATE_FROM = None
+_ROSTER_DATE_TO = None
+_ROSTER_EVENT_TYPE = 2
+_ROSTER_DEPARTMENT_ID_LIST = (44, 43)
+
+
+def _thread_session():
+    if getattr(_tls, "sess", None) is None:
+        sess, headers, _path = build_session(_COOKIE_FILE)
+        _tls.sess = sess
+        _tls.headers = headers
+    return _tls.sess, _tls.headers
+
+
+def _as_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _roster_labor_and_headcounts(ev):
+    """OS if event_list_agency_list non-empty; else FTE. Return labor + HC dict."""
+    agencies = ev.get("event_list_agency_list")
+    if isinstance(agencies, list) and agencies:
+        planned = 0
+        actual = 0
+        scheduled = 0
+        scheduled_seen = False
+        agency_ids = []
+        agency_names = []
+        for ag in agencies:
+            if not isinstance(ag, dict):
+                continue
+            planned += _as_int(ag.get("planned_headcount"))
+            actual += _as_int(ag.get("actual_headcount"))
+            if "scheduled_headcount" in ag and ag.get("scheduled_headcount") is not None:
+                scheduled += _as_int(ag.get("scheduled_headcount"))
+                scheduled_seen = True
+            if ag.get("agency_id") not in (None, ""):
+                agency_ids.append(str(ag.get("agency_id")))
+            if ag.get("agency_name"):
+                agency_names.append(str(ag.get("agency_name")))
+        if not scheduled_seen:
+            scheduled = _as_int(ev.get("scheduled_headcount"))
+        return {
+            "labor_type": "OS",
+            "agency_id": "|".join(agency_ids),
+            "agency_name": "|".join(agency_names),
+            "planned_headcount": planned,
+            "actual_headcount": actual,
+            "scheduled_headcount": scheduled,
+        }
+    return {
+        "labor_type": "FTE",
+        "agency_id": "",
+        "agency_name": "",
+        "planned_headcount": _as_int(ev.get("planned_headcount")),
+        "actual_headcount": _as_int(ev.get("actual_headcount")),
+        "scheduled_headcount": _as_int(ev.get("scheduled_headcount")),
+    }
+
+
+def _cook_attendance(scheduled, planned, actual, staff_count, off_count):
+    """Cook attendance metrics using the staff-search response total for OFF.
+
+    ``off_count`` is the authoritative ``data.total`` returned by
+    event_add_staff_search for this event.  It is deliberately not inferred
+    from staff-row fields or heuristics.
+    """
+    notes = []
+    off = max(0, _as_int(off_count))
+
+    if scheduled > 0:
+        total = scheduled
+        notes.append("total=scheduled_headcount")
+    elif planned > 0:
+        total = planned
+        notes.append("total=planned_headcount")
+    else:
+        total = _as_int(staff_count)
+        notes.append("total=staff_count_fallback")
+
+    present = _as_int(actual)
+    not_yet = max(0, total - present - off)
+    if total > 0:
+        pct = round(100.0 * present / total, 2)
+    else:
+        pct = ""
+        notes.append("attendance_pct_blank_total0")
+    notes.append("off_from_staff_search_total")
+    return {
+        "total_people": total,
+        "present_count": present,
+        "attendance_pct": pct,
+        "off_count": off,
+        "not_yet_present_count": not_yet,
+        "metric_notes": ";".join(notes),
+    }
+
+
+def _fetch_roster_staff(sess, headers, event_id, station_id):
+    """GET event_add_staff_search for one event (paginated + short retry).
+
+    Returns (staff_list, total, error).  The response ``data.total`` is the
+    authoritative event OFF count; rows are still paginated for completeness.
+    """
+    page_size = 200
+    all_rows = []
+    response_total = None
+    last_err = None
+    page_no = 1
+    max_pages = 20
+    while page_no <= max_pages:
+        params = {
+            "page_no": page_no,
+            "count": page_size,
+            "event_id": event_id,
+            "station_id": int(station_id),
+        }
+        body = None
+        resp = None
+        for attempt in range(3):
+            try:
+                resp = sess.get(
+                    ROSTER_STAFF_URL, headers=headers, params=params, timeout=60
+                )
+                body = resp.json()
+            except Exception as exc:
+                last_err = "%s: %s" % (type(exc).__name__, exc)
+                time.sleep(0.4 * (attempt + 1))
+                continue
+            msg = ""
+            if isinstance(body, dict):
+                msg = str(body.get("message") or "")
+            soft = "maintenance" in msg.lower() or "try again" in msg.lower()
+            bad = resp.status_code != 200 or (
+                isinstance(body, dict) and body.get("retcode") not in (0, "0", None)
+            )
+            if bad and soft and attempt < 2:
+                last_err = msg or ("http=%s" % resp.status_code)
+                time.sleep(0.6 * (attempt + 1))
+                continue
+            if bad:
+                last_err = (
+                    msg
+                    or (
+                        str(body.get("retcode"))
+                        if isinstance(body, dict)
+                        else ""
+                    )
+                    or ("http=%s" % resp.status_code)
+                )
+                return [], 0, last_err
+            break
+        else:
+            return [], 0, last_err or "staff fetch failed"
+        data = body.get("data") if isinstance(body, dict) else None
+        if not isinstance(data, dict):
+            return [], 0, "empty staff data"
+        raw_total = data.get("total")
+        if raw_total not in (None, ""):
+            response_total = max(0, _as_int(raw_total))
+        lst = data.get("event_staff_list") or []
+        if not isinstance(lst, list):
+            lst = []
+        page_rows = [x for x in lst if isinstance(x, dict)]
+        all_rows.extend(page_rows)
+        if response_total is not None and len(all_rows) >= response_total:
+            break
+        if not page_rows or len(page_rows) < page_size:
+            break
+        page_no += 1
+    total = response_total if response_total is not None else len(all_rows)
+    return all_rows, total, None
+
+
+def _cook_roster_today(body, station_id, station_name_hint, sess, headers):
+    """Today-only events + staff join -> cooked event rows + one hub rollup row."""
+    if not isinstance(body, dict):
+        return []
+    data = body.get("data")
+    if not isinstance(data, dict):
+        return []
+    target_dates = set()
+    if _ROSTER_DATE_FROM is not None:
+        target_dates.add(int(_ROSTER_DATE_FROM))
+    rows = []
+    for day in data.get("event_day_list") or []:
+        if not isinstance(day, dict):
+            continue
+        day_date = day.get("event_date")
+        try:
+            day_date_i = int(day_date)
+        except (TypeError, ValueError):
+            continue
+        if target_dates and day_date_i not in target_dates:
+            continue
+        for ev in day.get("event_list") or []:
+            if not isinstance(ev, dict):
+                continue
+            event_id = ev.get("event_id") or ""
+            hc = _roster_labor_and_headcounts(ev)
+            staff_list, staff_total, staff_err = _fetch_roster_staff(
+                sess, headers, event_id, station_id
+            )
+            cooked = _cook_attendance(
+                hc["scheduled_headcount"],
+                hc["planned_headcount"],
+                hc["actual_headcount"],
+                staff_total,
+                staff_total,
+            )
+            if staff_err:
+                cooked["metric_notes"] = (
+                    (cooked.get("metric_notes") or "") + ";staff_err=" + staff_err
+                ).strip(";")
+            event_date = ev.get("event_date", day_date)
+            rows.append(
+                {
+                    "grain": "event",
+                    "station_id": ev.get("station_id", station_id),
+                    "station_name": ev.get("station_name") or station_name_hint or "",
+                    "event_date": event_date,
+                    "event_date_iso": _unix_to_iso_saigon(event_date),
+                    "event_id": event_id,
+                    "slot_code": ev.get("slot_code"),
+                    "labor_type": hc["labor_type"],
+                    "agency_name": hc["agency_name"],
+                    "scheduled_headcount": hc["scheduled_headcount"],
+                    "actual_headcount": hc["actual_headcount"],
+                    "planned_headcount": hc["planned_headcount"],
+                    "attendance_pct": cooked["attendance_pct"],
+                    "off_count": cooked["off_count"],
+                    "event_department_name": ev.get("event_department_name"),
+                    # retained internally for debugging / hub math; ignored by CSV allowlist
+                    "staff_count": staff_total,
+                    "metric_notes": cooked["metric_notes"],
+                }
+            )
+    if rows:
+        sum_sched = sum(_as_int(r["scheduled_headcount"]) for r in rows)
+        sum_plan = sum(_as_int(r["planned_headcount"]) for r in rows)
+        sum_act = sum(_as_int(r["actual_headcount"]) for r in rows)
+        sum_staff = sum(_as_int(r.get("staff_count")) for r in rows)
+        # Hub/mix grain deliberately sums event totals.  A person appearing
+        # on multiple events is counted once per event, per the documented rollup.
+        sum_off = sum(_as_int(r.get("off_count")) for r in rows)
+        hub_cook = _cook_attendance(sum_sched, sum_plan, sum_act, sum_staff, sum_off)
+        if hub_cook["total_people"] > 0:
+            hub_cook["attendance_pct"] = round(
+                100.0 * hub_cook["present_count"] / hub_cook["total_people"], 2
+            )
+        n_os = sum(1 for r in rows if r.get("labor_type") == "OS")
+        n_fte = sum(1 for r in rows if r.get("labor_type") == "FTE")
+        rows.append(
+            {
+                "grain": "hub",
+                "station_id": station_id,
+                "station_name": station_name_hint or (rows[0].get("station_name") or ""),
+                "event_date_iso": _unix_to_iso_saigon(_ROSTER_DATE_FROM),
+                "slot_code": "",
+                "labor_type": "MIX" if n_os and n_fte else ("OS" if n_os else "FTE"),
+                "agency_name": "",
+                "scheduled_headcount": sum_sched,
+                "actual_headcount": sum_act,
+                "planned_headcount": sum_plan,
+                "attendance_pct": hub_cook["attendance_pct"],
+                "off_count": sum_off,
+                "event_department_name": "",
+                "staff_count": sum_staff,
+                "metric_notes": "hub_rollup;events=%d;OS=%d;FTE=%d;off_sum_event_totals=%d;%s"
+                % (len(rows), n_os, n_fte, sum_off, hub_cook["metric_notes"]),
+            }
+        )
+    return rows
+
+
+def _extract_rows(body, mode):
+    if not isinstance(body, dict):
+        return []
+    data = body.get("data")
+    if mode in ("list0", "dict"):
+        if isinstance(data, dict):
+            lst = data.get("list")
+            if isinstance(lst, list) and lst and isinstance(lst[0], dict):
+                return [dict(lst[0])]
+            row = {k: v for k, v in data.items() if k != "list"}
+            if row:
+                return [row]
+        if isinstance(data, list) and data and isinstance(data[0], dict):
+            return [dict(data[0])]
+        return []
+    if mode == "list_all":
+        if isinstance(data, dict) and isinstance(data.get("list"), list):
+            return [dict(x) for x in data["list"] if isinstance(x, dict)]
+        if isinstance(data, list):
+            return [dict(x) for x in data if isinstance(x, dict)]
+        return []
+    return []
+
+
+def fetch_one(api_key, station_id, station_name_hint=""):
+    endpoint, _name, mode, body_kind = API_SPECS[api_key]
+    if api_key == "roster":
+        url = ROSTER_URL
+    else:
+        url = API_BASE + endpoint
+    sess, headers = _thread_session()
+    fetched_at = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+    req_body = build_request_body(api_key, station_id)
+    request_bodies = [req_body]
+    if body_kind == "fm_order_volume_probe":
+        # Probe the documented station-only body, then use the backlog-style
+        # is_all body only when the API explicitly requests it.
+        request_bodies.append({"is_all": 0, "station_id": int(station_id)})
+    t0 = time.perf_counter()
+    body = None
+    resp = None
+    try:
+        for attempt_body in request_bodies:
+            req_body = attempt_body
+            resp = sess.post(url, headers=headers, json=req_body, timeout=60)
+            body = resp.json()
+            retcode = body.get("retcode") if isinstance(body, dict) else None
+            if not (body_kind == "fm_order_volume_probe" and str(retcode) == "-21001" and attempt_body != request_bodies[-1]):
+                break
+    except Exception as exc:
+        return {
+            "ok": False,
+            "station_id": station_id,
+            "station_name": station_name_hint,
+            "fetched_at": fetched_at,
+            "http": None,
+            "retcode": None,
+            "request_body": req_body,
+            "ms": (time.perf_counter() - t0) * 1000,
+            "error": "%s: %s" % (type(exc).__name__, exc),
+            "rows": [],
+        }
+    ms = (time.perf_counter() - t0) * 1000
+    retcode = body.get("retcode") if isinstance(body, dict) else None
+    if mode == "roster_events":
+        rows = _cook_roster_today(body, station_id, station_name_hint, sess, headers)
+    else:
+        rows = _extract_rows(body, mode)
+    ok = resp.status_code == 200 and retcode == 0 and bool(rows)
+    for row in rows:
+        row.setdefault("station_id", station_id)
+        if not row.get("station_name") and station_name_hint:
+            row.setdefault("station_name", station_name_hint)
+    msg = str((body.get("message") if isinstance(body, dict) else None) or "")
+    return {
+        "ok": ok,
+        "station_id": station_id,
+        "station_name": station_name_hint
+        or ((rows[0].get("station_name") if rows else "") or ""),
+        "fetched_at": fetched_at,
+        "http": resp.status_code,
+        "retcode": retcode,
+        "request_body": req_body,
+        "ms": ms,
+        "error": None if ok else (msg or "empty/fail"),
+        "rows": rows,
+    }
+
+
+def write_csv(path, results, allowed_metrics=None):
+    flat = []
+    for item in results:
+        if not item.get("ok"):
+            continue
+        fetched_at = item.get("fetched_at") or ""
+        station_id = item.get("station_id")
+        station_name = item.get("station_name") or ""
+        for row in item.get("rows") or []:
+            out = dict(row)
+            out.setdefault("station_id", station_id)
+            if "station_name" not in out and station_name:
+                out["station_name"] = station_name
+            out["fetched_at"] = fetched_at
+            flat.append(out)
+
+    field_keys = []
+    seen = set()
+    for row in flat:
+        for key in row:
+            if key in ("station_id", "station_name", "fetched_at"):
+                continue
+            if allowed_metrics is not None and key not in allowed_metrics:
+                continue
+            if key not in seen:
+                seen.add(key)
+                field_keys.append(key)
+    prefer = (
+        list(allowed_metrics)
+        if allowed_metrics is not None
+        else list(ORDER_VOLUME_KEY_METRICS) + list(BACKLOG_KEY_METRICS)
+    )
+    if allowed_metrics is not None:
+        # Keep the header stable even when an API response omits a metric.
+        ordered = list(allowed_metrics)
+    else:
+        ordered = [k for k in prefer if k in seen] + [
+            k for k in field_keys if k not in prefer
+        ]
+    columns = ["station_id", "station_name"] + ordered + ["fetched_at"]
+
+    out_path = Path(path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = out_path.with_suffix(out_path.suffix + ".tmp")
+    with tmp_path.open("w", encoding="utf-8-sig", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=columns, extrasaction="ignore")
+        writer.writeheader()
+        for row in flat:
+            out = {col: "" for col in columns}
+            for key, value in row.items():
+                if key in out:
+                    out[key] = "" if value is None else value
+            writer.writerow(out)
+    try:
+        os.replace(str(tmp_path), str(out_path))
+    except PermissionError:
+        try:
+            if tmp_path.exists():
+                tmp_path.unlink()
+        except Exception:
+            pass
+        raise SystemExit(
+            "Khong ghi duoc %s (dang mo Excel?). Dong file roi chay lai." % out_path
+        )
+    return columns, len(flat)
+
+
+def run_api(api_key, hubs, workers, out_path):
+    endpoint, _name, mode, _bk = API_SPECS[api_key]
+    ep_show = ROSTER_URL if api_key == "roster" else endpoint
+    print(
+        "[%s] endpoint=%s hubs=%d workers=%d -> %s"
+        % (api_key, ep_show, len(hubs), workers, out_path),
+        flush=True,
+    )
+    if api_key == "roster":
+        print(
+            "  roster dates event_type=%s from=%s (%s) to=%s (%s)"
+            % (
+                _ROSTER_EVENT_TYPE,
+                _ROSTER_DATE_FROM,
+                _unix_to_iso_saigon(_ROSTER_DATE_FROM),
+                _ROSTER_DATE_TO,
+                _unix_to_iso_saigon(_ROSTER_DATE_TO),
+            ),
+            flush=True,
+        )
+    results = []
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futs = {
+            pool.submit(
+                fetch_one, api_key, h["station_id"], h.get("station_name") or ""
+            ): h["station_id"]
+            for h in hubs
+        }
+        for fut in as_completed(futs):
+            results.append(fut.result())
+    order = {h["station_id"]: i for i, h in enumerate(hubs)}
+    results.sort(key=lambda x: order.get(x["station_id"], 10**9))
+
+    ok_items = [r for r in results if r["ok"]]
+    skip_items = [r for r in results if not r["ok"]]
+    for item in ok_items:
+        extra = ""
+        rows = item.get("rows") or []
+        if rows and api_key == "order_volume":
+            r0 = rows[0]
+            extra = " inbound=%s delivered=%s" % (
+                r0.get("lm_hub_inbounded_order_qty_eod"),
+                r0.get("lm_hub_delivered_order_qty_eod"),
+            )
+        elif rows and api_key == "backlog":
+            r0 = rows[0]
+            extra = " gte_1d=%s to_deliver_eq_1d=%s" % (
+                r0.get("lm_hub_backlog_gte_1d_order_qty_td"),
+                r0.get("lm_hub_to_deliver_backlog_eq_1d_order_qty_td"),
+            )
+        elif rows and api_key == "delivery_progress":
+            r0 = rows[0]
+            extra = " drivers=%d sample_driver=%s assigned=%s" % (
+                len(rows),
+                r0.get("driver_id"),
+                r0.get("lm_hub_fleet_assigned_order_qty_td"),
+            )
+        elif rows and api_key == "fm_order_volume":
+            r0 = rows[0]
+            extra = " body=%s inbound=%s outbound=%s picked=%s" % (
+                item.get("request_body"),
+                r0.get("total_inbounded_order_qty_eoh"),
+                r0.get("total_outbounded_order_qty_eoh"),
+                r0.get("total_picked_order_qty_eoh"),
+            )
+        elif rows and api_key == "roster":
+            n_os = sum(1 for r in rows if r.get("labor_type") == "OS")
+            n_fte = sum(1 for r in rows if r.get("labor_type") == "FTE")
+            r0 = rows[0]
+            extra = " OS=%d FTE=%d sample_event=%s labor=%s" % (
+                n_os,
+                n_fte,
+                r0.get("event_id"),
+                r0.get("labor_type"),
+            )
+        print(
+            "  %s OK station_id=%s name=%s rows=%d ms=%.0f%s"
+            % (
+                api_key,
+                item["station_id"],
+                item.get("station_name") or "",
+                len(rows),
+                item.get("ms") or 0,
+                extra,
+            ),
+            flush=True,
+        )
+    if skip_items:
+        print("  %s SKIPPED %d hub(s):" % (api_key, len(skip_items)), flush=True)
+        for item in skip_items[:30]:
+            print(
+                "    skip station_id=%s http=%s ret=%s err=%s"
+                % (
+                    item["station_id"],
+                    item.get("http"),
+                    item.get("retcode"),
+                    item.get("error") or "",
+                ),
+                flush=True,
+            )
+        if len(skip_items) > 30:
+            print("    ... va %d hub khac" % (len(skip_items) - 30), flush=True)
+
+    # backlog and delivery_progress: exact allowlists; order_volume keeps response fields.
+    if api_key == "backlog":
+        allowed_metrics = BACKLOG_KEY_METRICS
+    elif api_key == "delivery_progress":
+        allowed_metrics = DELIVERY_PROGRESS_KEY_METRICS
+    elif api_key == "fm_order_volume":
+        allowed_metrics = FM_ORDER_VOLUME_KEY_METRICS
+    elif api_key == "roster":
+        allowed_metrics = ROSTER_KEY_METRICS
+    else:
+        allowed_metrics = None
+    _cols, row_n = write_csv(out_path, results, allowed_metrics=allowed_metrics)
+    print(
+        "  Wrote %s | hub_ok=%d hub_skip=%d csv_rows=%d"
+        % (out_path, len(ok_items), len(skip_items), row_n),
+        flush=True,
+    )
+    return len(ok_items), len(skip_items), row_n
+
+
+def resolve_out_path(api_key, out_dir, out_suffix=""):
+    _ep, default_name, _mode, _bk = API_SPECS[api_key]
+    name = default_name
+    if out_suffix:
+        stem, ext = os.path.splitext(default_name)
+        name = "%s%s%s" % (stem, out_suffix, ext or ".csv")
+    return str(Path(out_dir) / name)
+
+
+def parse_args(argv=None):
+    p = argparse.ArgumentParser(
+        description=(
+            "Standalone export LM hub order_volume/backlog/delivery_progress/"
+            "fm_order_volume/roster -> CSV"
+        )
+    )
+    p.add_argument("--hubs", default=str(DEFAULT_HUBS), help="CSV hub (station_id)")
+    p.add_argument(
+        "--apis",
+        default=",".join(DEFAULT_APIS),
+        help=(
+            "order_volume,backlog,delivery_progress,fm_order_volume,roster "
+            "| all (mac dinh: order_volume,backlog). Alias: event_list=roster"
+        ),
+    )
+    p.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR), help="Thu muc CSV")
+    p.add_argument("--out-suffix", default="", help="Hau to ten file (_test/_full)")
+    p.add_argument("--workers", type=int, default=4)
+    p.add_argument(
+        "--strict",
+        action="store_true",
+        help="Exit 1 neu co hub skip (mac dinh: exit 0 neu >=1 OK)",
+    )
+    p.add_argument(
+        "--cookie-file",
+        default="",
+        help="Path cookie JSON (mac dinh: cookies/cookies.json)",
+    )
+    p.add_argument(
+        "--launcher-cookie",
+        action="store_true",
+        help="OPTIONAL: dung cookie SPX_Launcher (OFF mac dinh). "
+        "Khong khuyen nghi — pack nay doc lap.",
+    )
+    p.add_argument(
+        "--date-from",
+        type=int,
+        default=None,
+        help=(
+            "roster only: event_date_from unix. Default: TODAY Asia/Saigon midnight "
+            "(today-only; from=to=today)."
+        ),
+    )
+    p.add_argument(
+        "--date-to",
+        type=int,
+        default=None,
+        help=(
+            "roster only: event_date_to unix. Default: TODAY Asia/Saigon midnight "
+            "(same as --date-from for today-only)."
+        ),
+    )
+    p.add_argument(
+        "--event-type",
+        type=int,
+        default=2,
+        help="roster only: event_type (mac dinh 2)",
+    )
+    return p.parse_args(argv)
+
+
+def main(argv=None):
+    global _COOKIE_FILE, _ROSTER_DATE_FROM, _ROSTER_DATE_TO, _ROSTER_EVENT_TYPE
+    args = parse_args(argv)
+    workers = max(1, int(args.workers or 4))
+    apis = parse_apis(args.apis)
+    hubs = load_hubs(args.hubs)
+
+    d_from, d_to = default_roster_date_range()
+    _ROSTER_DATE_FROM = int(args.date_from) if args.date_from is not None else d_from
+    _ROSTER_DATE_TO = int(args.date_to) if args.date_to is not None else d_to
+    _ROSTER_EVENT_TYPE = int(args.event_type if args.event_type is not None else 2)
+
+    if args.launcher_cookie:
+        _COOKIE_FILE = str(LAUNCHER_COOKIE)
+        print(
+            "WARN: --launcher-cookie ON -> %s (khong phai mac dinh pack)"
+            % _COOKIE_FILE,
+            flush=True,
+        )
+    elif args.cookie_file:
+        _COOKIE_FILE = args.cookie_file
+    else:
+        _COOKIE_FILE = str(resolve_cookie_file())
+
+    try:
+        # validate cookie early (khong in value)
+        _sess, _hdrs, cookie_path = build_session(_COOKIE_FILE)
+        print(
+            "Cookie OK path=%s csrf=%s (values masked)"
+            % (cookie_path, bool(_hdrs.get("x-csrftoken"))),
+            flush=True,
+        )
+        del _sess
+    except CookieError as exc:
+        print(str(exc), flush=True)
+        return 2
+
+    print(
+        "Hubs: %d | apis=%s | workers=%d | out_dir=%s | strict=%s"
+        % (len(hubs), ",".join(apis), workers, args.out_dir, bool(args.strict)),
+        flush=True,
+    )
+    if "roster" in apis:
+        print(
+            "Roster window: event_type=%s date_from=%s (%s) date_to=%s (%s) "
+            "[override: --date-from/--date-to/--event-type]"
+            % (
+                _ROSTER_EVENT_TYPE,
+                _ROSTER_DATE_FROM,
+                _unix_to_iso_saigon(_ROSTER_DATE_FROM),
+                _ROSTER_DATE_TO,
+                _unix_to_iso_saigon(_ROSTER_DATE_TO),
+            ),
+            flush=True,
+        )
+
+    total_ok = 0
+    total_fail = 0
+    summary = []
+    # Run selected APIs concurrently. Each run_api() keeps its own
+    # per-hub ThreadPoolExecutor(max_workers=workers).
+    out_paths = {api_key: resolve_out_path(api_key, args.out_dir, args.out_suffix or "") for api_key in apis}
+    print(
+        "API parallelism: %d API task(s), %d per-hub worker(s) each"
+        % (len(apis), workers),
+        flush=True,
+    )
+    api_results = {}
+    with ThreadPoolExecutor(max_workers=len(apis), thread_name_prefix="api") as api_pool:
+        future_to_api = {
+            api_pool.submit(run_api, api_key, hubs, workers, out_paths[api_key]): api_key
+            for api_key in apis
+        }
+        for future in as_completed(future_to_api):
+            api_key = future_to_api[future]
+            api_results[api_key] = future.result()
+
+    # Keep summary output in the requested/API-spec order, not completion order.
+    for api_key in apis:
+        ok_n, fail_n, row_n = api_results[api_key]
+        out_path = out_paths[api_key]
+        total_ok += ok_n
+        total_fail += fail_n
+        summary.append((api_key, ok_n, fail_n, row_n, out_path))
+    print("===SUMMARY===", flush=True)
+    for api_key, ok_n, fail_n, row_n, out_path in summary:
+        print(
+            "%s ok=%d skip=%d rows=%d -> %s"
+            % (api_key, ok_n, fail_n, row_n, out_path),
+            flush=True,
+        )
+
+    if args.strict:
+        return 1 if total_fail else 0
+    return 0 if total_ok > 0 else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

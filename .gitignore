@@ -1,0 +1,3 @@
+﻿# Browser/local runtime state
+data/chrome_*
+cookies/

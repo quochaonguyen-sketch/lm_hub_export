@@ -1,0 +1,40 @@
+{
+  "event_id": "VNO93EVENT2610020002",
+  "event_type": 2,
+  "event_date": 1790874000,
+  "event_status": 2,
+  "event_function_id": "",
+  "event_function_name": "",
+  "event_department_id": 44,
+  "event_department_name": "FM/LM",
+  "scheduled_headcount": 0,
+  "planned_headcount": 0,
+  "slot_id": "SLVN000000000968",
+  "slot_code": "04:00-09:00",
+  "slot_start_time": 14400,
+  "slot_end_time": 32400,
+  "slot_display": "[04:00-09:00] 04:00-09:00",
+  "station_name": "50-HCM Thu Duc/Linh Trung Hub",
+  "rrule": "",
+  "id": 5532135,
+  "actual_headcount": 1,
+  "male_actual_headcount": 1,
+  "female_actual_headcount": 0,
+  "station_id": 93,
+  "dedicated_scheduled_headcount": 0,
+  "non_dedicated_scheduled_headcount": 0,
+  "operator": "system@spx.com",
+  "event_source": 2,
+  "event_list_agency_list": [
+    {
+      "agency_id": 40,
+      "agency_name": "GRG",
+      "planned_headcount": 1,
+      "actual_headcount": 1
+    }
+  ],
+  "biz_department_id": "44",
+  "reporting_team_id": 0,
+  "reporting_sub_team_id": "",
+  "reporting_sub_team_name": ""
+}

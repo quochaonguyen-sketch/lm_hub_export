@@ -1,0 +1,12 @@
+﻿station_id,station_name,grain,event_date_iso,slot_code,labor_type,agency_name,scheduled_headcount,actual_headcount,planned_headcount,attendance_pct,off_count,event_department_name,fetched_at
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,04:00-09:00,OS,GRG,0,1,1,100.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,04:00-13:00,FTE,,1,1,0,100.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,05:00-14:00,FTE,,1,1,0,100.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,08:00-17:00,FTE,,1,1,0,100.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,09:00-18:00,FTE,,1,1,0,100.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,10:00-16:00,OS,GRG,0,1,1,100.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,11:00-20:00,FTE,,2,0,0,0.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,12:00-21:00,FTE,,1,0,0,0.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,14:00-23:00,FTE,,1,0,0,0.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,event,2026-10-02,16:00-23:00,OS,AGR|GRG|MBB|SKT,0,0,0,0.0,0,FM/LM,2026-10-02 10:28:15
+93,50-HCM Thu Duc/Linh Trung Hub,hub,2026-10-02,,MIX,,8,6,2,75.0,0,,2026-10-02 10:28:15
