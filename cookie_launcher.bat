@@ -1,6 +1,9 @@
 @echo off
-REM Cookie launcher: kiem tra cookie SPX moi 60 phut (1 tieng), tu refresh, chay export tat ca API.
-REM Them --no-export / --once / --interval-min N ... (xem README)
+REM Khong tham so: mo giao dien. Co tham so: giu che do console (hoac them --gui).
 cd /d "%~dp0"
+if "%~1"=="" (
+  start "" /b pyw -3.14 cookie_launcher.py --gui
+  exit /b
+)
 py -3.14 cookie_launcher.py %*
 pause

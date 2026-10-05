@@ -12,7 +12,8 @@ Vong lap (mac dinh moi 60 phut / 1 tieng):
 
 KHONG in gia tri cookie. Ctrl+C de thoat.
 
-  py -3.14 cookie_launcher.py                 # chay vong lap
+  py -3.14 cookie_launcher.py                 # mo giao dien
+  py -3.14 cookie_launcher.py --cli           # chay vong lap console
   py -3.14 cookie_launcher.py --once --no-export
 """
 from __future__ import annotations
@@ -23,6 +24,8 @@ import datetime as _dt
 import io
 import json
 import os
+import math
+import queue
 import re
 import subprocess
 import sys
@@ -43,6 +46,48 @@ LOCK_FILE = ROOT / "output" / "cookie_launcher.lock"
 EXPORT_SCRIPT = ROOT / "export_lm_hubs.py"
 LOG_MAX_BYTES = 20 * 1024 * 1024
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+LOG_LISTENER = None
+API_OPTIONS = {
+    "order_volume": ("Sản lượng LM", "Sản lượng đơn hàng theo hub"),
+    "backlog": ("Đơn tồn", "Backlog theo số ngày tồn"),
+    "delivery_progress": ("Tiến độ giao hàng", "Tiến độ giao theo tài xế"),
+    "fm_order_volume": ("Sản lượng FM", "Nhận, lấy và xuất đơn FM"),
+    "roster": ("Nhân sự hôm nay", "Lịch làm việc và chấm công"),
+}
+
+
+class CycleCancelled(Exception):
+    """User requested a cooperative stop."""
+
+
+def pause(seconds, args):
+    event = getattr(args, "stop_event", None)
+    if event is None:
+        time.sleep(seconds)
+    elif event.wait(max(0, seconds)):
+        raise CycleCancelled()
+
+
+def report(args, phase, **details):
+    callback = getattr(args, "status_callback", None)
+    if callback:
+        callback(phase, details)
+
+
+def parse_apis(value):
+    keys = list(API_OPTIONS) if value.strip().lower() == "all" else [
+        "roster" if k.strip().lower() == "event_list" else k.strip().lower()
+        for k in value.split(",") if k.strip()]
+    if not keys or any(k not in API_OPTIONS for k in keys):
+        raise argparse.ArgumentTypeError("Chọn API: " + ", ".join(API_OPTIONS) + " hoặc all")
+    return ",".join(k for k in API_OPTIONS if k in keys)
+
+
+def positive_minutes(value):
+    number = float(value)
+    if not math.isfinite(number) or number < 1:
+        raise argparse.ArgumentTypeError("Chu kỳ phải từ 1 phút trở lên")
+    return number
 
 
 # ----------------------------------------------------------------- console / log
@@ -71,6 +116,10 @@ def _rotate_log() -> None:
 
 
 def log_file_only(lines) -> None:
+    lines = list(lines)
+    if LOG_LISTENER:
+        for line in lines:
+            LOG_LISTENER(str(line))
     try:
         LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
         stamp = _now().strftime("%Y-%m-%d %H:%M:%S")
@@ -82,7 +131,8 @@ def log_file_only(lines) -> None:
 
 
 def log(msg: str) -> None:
-    print(msg, flush=True)
+    if sys.stdout is not None:
+        print(msg, flush=True)
     log_file_only(str(msg).splitlines() or [""])
 
 
@@ -110,7 +160,7 @@ def load_cookies(path: Path = COOKIE_FILE) -> list[dict]:
         return []
     if isinstance(data, dict):
         data = data.get("cookies") or []
-    return [c for c in data if isinstance(c, dict)]
+    return [c for c in data if isinstance(c, dict)] if isinstance(data, list) else []
 
 
 def session_expiry(cookies) -> float | None:
@@ -124,7 +174,7 @@ def session_expiry(cookies) -> float | None:
             exp = float(exp)
         except (TypeError, ValueError):
             continue
-        if exp <= 0:
+        if not math.isfinite(exp) or exp <= 0:
             continue
         best = exp if best is None else max(best, exp)
     return best
@@ -209,7 +259,7 @@ def debug_chrome_pids() -> list[int]:
     return [int(p["ProcessId"]) for p in procs if is_debug_profile_cmdline(p.get("CommandLine"))]
 
 
-def close_debug_chrome(port: int) -> int:
+def close_debug_chrome(port: int, args=None) -> int:
     """Dong RIENG Chrome SPX debug. Chrome thuong cua user KHONG bi dong."""
     pids = debug_chrome_pids()
     if not pids:
@@ -220,13 +270,13 @@ def close_debug_chrome(port: int) -> int:
         subprocess.run(["taskkill", "/PID", str(pid)], capture_output=True, creationflags=NO_WINDOW)
     end = time.time() + 8
     while time.time() < end and debug_chrome_pids():
-        time.sleep(1)
+        pause(1, args)
     left = debug_chrome_pids()
     for pid in left:  # con sot -> force, van chi cac pid profile rieng
         subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, creationflags=NO_WINDOW)
     end = time.time() + 10
     while time.time() < end and cci.cdp_version(port):
-        time.sleep(0.5)
+        pause(0.5, args)
     return len(pids)
 
 
@@ -259,7 +309,8 @@ def alert(title: str, text: str) -> None:
             winsound.Beep(1200, 350)
             time.sleep(0.15)
     except Exception:
-        print("\a", end="", flush=True)
+        if sys.stdout is not None:
+            print("\a", end="", flush=True)
 
 
 # ----------------------------------------------------------------- refresh
@@ -291,6 +342,7 @@ def try_save(cookies, args, label: str, need_long: bool) -> bool:
 
 
 def wait_for_login(args, reason: str) -> bool:
+    report(args, "login")
     secs = max(0, int(args.wait_login_sec))
     log(f"  !! {reason} -> can login SPX trong cua so Chrome SPX vua mo (doi toi da {secs // 60} phut).")
     alert("SPX cookie launcher",
@@ -300,7 +352,7 @@ def wait_for_login(args, reason: str) -> bool:
           "Không cần bấm OK, launcher vẫn đang chạy.")
     end = time.time() + secs
     while time.time() < end:
-        time.sleep(min(15, max(1, end - time.time())))
+        pause(min(15, max(1, end - time.time())), args)
         if not cci.cdp_version(args.port):
             log("  Cua so Chrome SPX da bi dong -> mo lai.")
             try:
@@ -318,13 +370,15 @@ def wait_for_login(args, reason: str) -> bool:
 
 def refresh_cookie(args) -> bool:
     """True neu cookies.json da co cookie hop le moi."""
+    report(args, "refresh")
+    pause(0, args)
     # 0) Chrome SPX rieng dang mo san -> thu lay cookie moi ma khong dong
     if cci.cdp_version(args.port):
         log("  Chrome SPX rieng dang mo -> thu doc cookie qua CDP truoc")
         if try_save(read_cdp_cookies(args.port), args, "CDP", need_long=True):
             return True
     # 1) dong RIENG Chrome SPX debug + mo lai
-    close_debug_chrome(args.port)
+    close_debug_chrome(args.port, args)
     try:
         quiet(cci.launch_debug_chrome, args.port)
     except cci.ImportFail as exc:
@@ -332,7 +386,7 @@ def refresh_cookie(args) -> bool:
         return False
     saved_short = False
     for _ in range(4):  # cho trang SPX load / cookie set
-        time.sleep(5)
+        pause(5, args)
         cookies = read_cdp_cookies(args.port)
         if try_save(cookies, args, "Chrome moi", need_long=True):
             return True
@@ -351,26 +405,56 @@ def refresh_cookie(args) -> bool:
 # ----------------------------------------------------------------- export
 
 def run_export(args) -> int:
+    pause(0, args)
     if other_export_running():
         log("  Export khac dang chay -> bo qua lan nay.")
         return -1
-    cmd = [sys.executable, "-u", str(EXPORT_SCRIPT), "--apis", "all"]
+    apis = getattr(args, "apis", "all")
+    cmd = [sys.executable, "-u", str(EXPORT_SCRIPT), "--apis", apis]
     env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUTF8="1")
     t0 = time.time()
-    log(f"[{_now():%H:%M}] Export bat dau: export_lm_hubs.py --apis all (log: output\\{LOG_FILE.name})")
+    report(args, "export")
+    log(f"[{_now():%H:%M}] Export bat dau: export_lm_hubs.py --apis {apis} (log: output\\{LOG_FILE.name})")
     proc = subprocess.Popen(cmd, cwd=str(ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                            env=env, text=True, encoding="utf-8", errors="replace", bufsize=1)
+                            env=env, text=True, encoding="utf-8", errors="replace", bufsize=1,
+                            creationflags=NO_WINDOW)
+    output = queue.Queue()
+    def read_output():
+        try:
+            for line in proc.stdout:
+                output.put(line.rstrip("\r\n"))
+        finally:
+            output.put(None)
+    reader = threading.Thread(target=read_output, daemon=True)
+    reader.start()
     try:
         assert proc.stdout is not None
-        for line in proc.stdout:
-            line = line.rstrip("\r\n")
+        while True:
+            pause(0, args)
+            try:
+                line = output.get(timeout=0.2)
+            except queue.Empty:
+                continue
+            if line is None:
+                break
             log_file_only(["  [export] " + line])
-            if args.show_export_output:
+            if args.show_export_output and sys.stdout is not None:
                 print("  [export] " + line, flush=True)
-        rc = proc.wait()
-    except KeyboardInterrupt:
+        while proc.poll() is None:
+            pause(0.2, args)
+        rc = proc.returncode
+    except (KeyboardInterrupt, CycleCancelled):
         proc.terminate()
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait()
         raise
+    finally:
+        reader.join(timeout=2)
+        if not reader.is_alive():
+            proc.stdout.close()
     dur = int(time.time() - t0)
     log(f"[{_now():%H:%M}] Export xong | exit={rc} | {dur // 60}m{dur % 60:02d}s")
     return rc
@@ -381,6 +465,8 @@ def run_export(args) -> int:
 def one_cycle(args, next_at: _dt.datetime) -> bool:
     """1 lan kiem tra (+ refresh neu can, + export neu OK). True = cookie OK."""
     _rotate_log()
+    pause(0, args)
+    report(args, "check")
     cookies = load_cookies()
     h = hours_left(cookies)
     ok, msg = check_cookies(cookies)
@@ -399,7 +485,7 @@ def one_cycle(args, next_at: _dt.datetime) -> bool:
         h = hours_left(load_cookies())
         log(f"[{_now():%H:%M}] Cookie OK (sau refresh) | {hours_text(h)} | next check {next_at:%H:%M}")
     if not args.no_export:
-        run_export(args)
+        return run_export(args) == 0
     return True
 
 
@@ -418,10 +504,9 @@ def acquire_lock():
     return fh
 
 
-def main(argv=None) -> int:
-    setup_console()
+def build_parser():
     ap = argparse.ArgumentParser(description="Kiem tra cookie SPX dinh ky, tu refresh, chay export_lm_hubs.py --apis all")
-    ap.add_argument("--interval-min", type=float, default=60, help="Phut giua 2 lan kiem tra (mac dinh 60)")
+    ap.add_argument("--interval-min", type=positive_minutes, default=60, help="Phut giua 2 lan kiem tra (mac dinh 60)")
     ap.add_argument("--refresh-before-min", type=float, default=30,
                     help="Refresh khi cookie con duoi N phut (mac dinh 30)")
     ap.add_argument("--wait-login-sec", type=int, default=600, help="Doi login SPX toi da N giay (mac dinh 600)")
@@ -429,33 +514,53 @@ def main(argv=None) -> int:
     ap.add_argument("--no-export", action="store_true", help="Chi kiem tra/refresh cookie, khong chay export")
     ap.add_argument("--once", action="store_true", help="Chay 1 lan roi thoat (test)")
     ap.add_argument("--show-export-output", action="store_true", help="In log export ra man hinh (mac dinh chi ghi file)")
-    args = ap.parse_args(argv)
+    ap.add_argument("--apis", type=parse_apis, default="all", help="API cần chạy, cách nhau bằng dấu phẩy; mặc định all")
+    mode = ap.add_mutually_exclusive_group()
+    mode.add_argument("--gui", action="store_true", help="Mở cửa sổ điều khiển")
+    mode.add_argument("--cli", action="store_true", help="Chạy console (không mở giao diện)")
+    ap.add_argument("--start-delayed", action="store_true", help="Đợi đủ chu kỳ trước lần chạy đầu tiên")
+    return ap
+
+
+def run_loop(args) -> int:
 
     lock = acquire_lock()
     if lock is None:
-        print("Cookie launcher dang chay o cua so khac -> thoat.")
+        log("Cookie launcher dang chay o cua so khac -> thoat.")
         return 3
-    interval = max(1.0, args.interval_min) * 60
+    interval = args.interval_min * 60
     log(f"=== Cookie launcher start {_now():%Y-%m-%d %H:%M} | moi {args.interval_min:g} phut | "
-        f"refresh khi < {args.refresh_before_min:g} phut | export={'OFF' if args.no_export else 'all APIs'} ===")
+        f"refresh khi < {args.refresh_before_min:g} phut | export={'OFF' if args.no_export else args.apis} ===")
     try:
+        due = time.monotonic() + (interval if args.start_delayed else 0)
         while True:
+            report(args, "waiting", due=due)
+            while time.monotonic() < due:
+                pause(min(0.2, due - time.monotonic()), args)
+                wake = getattr(args, "run_now_event", None)
+                if wake and wake.is_set():
+                    wake.clear()
+                    break
+            pause(0, args)
             t0 = time.time()
+            started = time.monotonic()
             next_at = _dt.datetime.fromtimestamp(t0 + interval)
             try:
                 ok = one_cycle(args, next_at)
-            except KeyboardInterrupt:
+            except (KeyboardInterrupt, CycleCancelled):
                 raise
             except Exception as exc:
                 ok = False
                 log(f"[{_now():%H:%M}] Loi vong lap: {exc!r}")
+            report(args, "finished", ok=ok, at=_now().strftime("%H:%M:%S"))
             if args.once:
                 return 0 if ok else 1
-            wait = t0 + interval - time.time()
-            if wait > 0:
-                time.sleep(wait)
-            else:
+            due = started + interval
+            if due <= time.monotonic():
                 log(f"  (chu ky vuot {args.interval_min:g} phut -> kiem tra ngay)")
+    except CycleCancelled:
+        log("Da dung cookie launcher.")
+        return 130
     except KeyboardInterrupt:
         log("Da dung cookie launcher (Ctrl+C).")
         return 130
@@ -464,6 +569,21 @@ def main(argv=None) -> int:
             lock.close()
         except Exception:
             pass
+
+
+def main(argv=None) -> int:
+    setup_console()
+    tokens = list(sys.argv[1:] if argv is None else argv)
+    ap = build_parser()
+    args = ap.parse_args(tokens)
+    if not math.isfinite(args.refresh_before_min) or args.refresh_before_min < 0:
+        ap.error("--refresh-before-min phải là số hữu hạn không âm")
+    if args.wait_login_sec < 0 or not 1 <= args.port <= 65535:
+        ap.error("Thời gian chờ đăng nhập phải không âm; port từ 1 đến 65535")
+    if args.gui or (not tokens and not args.cli):
+        from cookie_launcher_ui import launch
+        return launch(args)
+    return run_loop(args)
 
 
 if __name__ == "__main__":

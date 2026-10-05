@@ -385,7 +385,24 @@ Ghi **chi** cookies\cookies.json. Khong sua cookie SPX_Launcher.
 cd /d C:\lm_hub_export
 cookie_launcher.bat
 ```
-(= `py -3.14 cookie_launcher.py`, de cua so mo; Ctrl+C de dung.)
+(= `py -3.14 cookie_launcher.py`, mở giao diện tiếng Việt; chưa chạy API cho đến khi bấm **Bắt đầu**.)
+
+Giao diện hiển thị số cookie còn hạn / tổng số, đếm ngược hạn phiên `fms_user_skey`,
+đếm ngược lượt chạy tiếp theo, kết quả lượt trước và nhật ký trực tiếp.
+Số cookie còn hạn chỉ dựa trên metadata trong file, không khẳng định phiên đăng nhập còn hợp lệ;
+launcher xác nhận phiên bằng API khi chạy.
+
+- Chọn **Chạy một lần** hoặc **Chạy lặp**, nhập chu kỳ (từ 1 phút).
+- Bật **Chạy ngay khi bấm bắt đầu** để chạy lượt đầu ngay; bỏ chọn để đợi đủ chu kỳ.
+- Chọn từng API: sản lượng LM, đơn tồn, tiến độ giao, sản lượng FM, nhân sự hôm nay.
+- **Chỉ kiểm tra / làm mới cookie** bỏ qua export, vẫn kiểm tra phiên qua API.
+- **Chạy ngay lượt kế** rút ngắn thời gian chờ khi đã đặt lịch.
+- **Dừng** hủy lịch và dừng export do cửa sổ này khởi chạy. Các thao tác mạng/Chrome đang thực hiện
+  cần hoàn tất trước khi dừng; đóng cửa sổ cũng chờ giải phóng tác vụ và khóa launcher.
+- **Mở log** / **Mở output** truy cập nhật ký và kết quả. Cấu hình bị khóa trong khi chạy.
+
+Chạy console như trước: `py -3.14 cookie_launcher.py --cli` (Ctrl+C để dừng).
+Truyền flag vào `.bat` vẫn chạy console; thêm `--gui` để mở giao diện với cấu hình ban đầu.
 
 Moi 60 phut (1 tieng) launcher:
 1. Doc han `fms_user_skey` trong `cookies\cookies.json` va goi thu 1 API SPX read-only.
@@ -396,7 +413,7 @@ Moi 60 phut (1 tieng) launcher:
 3. Neu session SPX het han han (mo lai van ra trang login): popup + beep,
    login SPX trong cua so Chrome SPX vua mo; launcher tu lay cookie trong 10 phut.
    Qua 10 phut chua login thi thu lai o lan kiem tra sau.
-4. Moi lan cookie OK: chay `export_lm_hubs.py --apis all` (tat ca API).
+4. Moi lan cookie OK: chay `export_lm_hubs.py --apis ...` (cac API da chon, mac dinh tat ca).
    Export dang chay thi khong mo them; export lau hon 60 phut thi kiem tra ngay sau khi xong.
 
 Log: `output\cookie_launcher.log` (ca log export). Khong in gia tri cookie.
@@ -410,6 +427,8 @@ Log: `output\cookie_launcher.log` (ca log export). Khong in gia tri cookie.
 | `--once` | Chay 1 lan roi thoat (test) |
 | `--show-export-output` | In log export ra man hinh (mac dinh chi ghi file log) |
 | `--port N` | CDP port Chrome SPX rieng (mac dinh 9222) |
+| `--apis order_volume,backlog` | Chỉ xuất các API đã chọn (mặc định `all`; hỗ trợ `event_list=roster`) |
+| `--gui` / `--cli` | Mở giao diện / chạy console |
+| `--start-delayed` | Chờ đủ chu kỳ trước lượt đầu tiên |
 
 Vi du: `cookie_launcher.bat --once --no-export` (chi kiem tra cookie 1 lan).
-
