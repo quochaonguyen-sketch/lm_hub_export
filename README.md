@@ -387,7 +387,7 @@ cookie_launcher.bat
 ```
 (= `py -3.14 cookie_launcher.py`, de cua so mo; Ctrl+C de dung.)
 
-Moi 10 phut launcher:
+Moi 60 phut (1 tieng) launcher:
 1. Doc han `fms_user_skey` trong `cookies\cookies.json` va goi thu 1 API SPX read-only.
    In 1 dong: `[11:52] Cookie OK | con 5.2 gio | next check 12:02`.
 2. Cookie het han / API tu choi / con duoi 30 phut: chi dong **Chrome SPX rieng**
@@ -397,13 +397,13 @@ Moi 10 phut launcher:
    login SPX trong cua so Chrome SPX vua mo; launcher tu lay cookie trong 10 phut.
    Qua 10 phut chua login thi thu lai o lan kiem tra sau.
 4. Moi lan cookie OK: chay `export_lm_hubs.py --apis all` (tat ca API).
-   Export dang chay thi khong mo them; export lau hon 10 phut thi kiem tra ngay sau khi xong.
+   Export dang chay thi khong mo them; export lau hon 60 phut thi kiem tra ngay sau khi xong.
 
 Log: `output\cookie_launcher.log` (ca log export). Khong in gia tri cookie.
 
 | Flag | Y nghia |
 |---|---|
-| `--interval-min N` | Phut giua 2 lan kiem tra (mac dinh 10) |
+| `--interval-min N` | Phut giua 2 lan kiem tra (mac dinh 60) |
 | `--refresh-before-min N` | Refresh khi cookie con duoi N phut (mac dinh 30) |
 | `--wait-login-sec N` | Doi login SPX toi da N giay (mac dinh 600) |
 | `--no-export` | Chi kiem tra / refresh cookie, khong chay export |

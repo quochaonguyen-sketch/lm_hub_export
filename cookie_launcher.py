@@ -1,7 +1,7 @@
 """
 Cookie launcher cho lm_hub_export.
 
-Vong lap (mac dinh moi 10 phut):
+Vong lap (mac dinh moi 60 phut / 1 tieng):
   1) Doc han cookie fms_user_skey trong cookies\\cookies.json -> so gio con lai.
   2) Goi 1 API SPX read-only (chrome_cookie_import.validate) de chac cookie con chay.
   3) Cookie het han / API tu choi / con < 30 phut:
@@ -421,7 +421,7 @@ def acquire_lock():
 def main(argv=None) -> int:
     setup_console()
     ap = argparse.ArgumentParser(description="Kiem tra cookie SPX dinh ky, tu refresh, chay export_lm_hubs.py --apis all")
-    ap.add_argument("--interval-min", type=float, default=10, help="Phut giua 2 lan kiem tra (mac dinh 10)")
+    ap.add_argument("--interval-min", type=float, default=60, help="Phut giua 2 lan kiem tra (mac dinh 60)")
     ap.add_argument("--refresh-before-min", type=float, default=30,
                     help="Refresh khi cookie con duoi N phut (mac dinh 30)")
     ap.add_argument("--wait-login-sec", type=int, default=600, help="Doi login SPX toi da N giay (mac dinh 600)")
