@@ -1,0 +1,31 @@
+{
+  "date_from": 1790874000,
+  "date_iso": "2026-10-02",
+  "matches_user_ts_1790874000": true,
+  "csv_166": {
+    "scheduled": 44,
+    "present": 43
+  },
+  "agency0_kept": 44,
+  "agency0_ev_only": 12,
+  "agency0_att_only": 32,
+  "agency0_cook": {
+    "scheduled_count": 44,
+    "present_count": 43,
+    "fte_count": 12,
+    "os_count": 32,
+    "bpo_count": 0
+  },
+  "agency9_kept": 12,
+  "agency9_cook": {
+    "scheduled_count": 12,
+    "present_count": 12,
+    "fte_count": 12,
+    "os_count": 0,
+    "bpo_count": 0
+  },
+  "user_rule_event_list_only": {
+    "scheduled": 12,
+    "present": 12
+  }
+}

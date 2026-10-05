@@ -1,0 +1,424 @@
+{
+  "hub93": {
+    "hub": 93,
+    "csv_labor": 12,
+    "csv_fte": 8,
+    "csv_os": 4,
+    "csv_bpo": 0,
+    "csv_present": 8,
+    "csv_scheduled": 8,
+    "csv_name": "50-HCM Thu Duc/Linh Trung Hub",
+    "att_filtered": 12,
+    "ops_fm_lm_kept": 12,
+    "cook_labor": 12,
+    "cook_fte": 8,
+    "cook_os": 4,
+    "cook_bpo": 0,
+    "cook_present": 0,
+    "cook_scheduled": 0,
+    "metric_notes": "agency_id=0;cal_raw=0;att_raw=12;labor_source=attendance",
+    "gap_att_vs_kept": 0,
+    "gap_att_vs_cook_labor": 0,
+    "drop_reasons": {},
+    "drop_samples": [],
+    "csv_vs_cook_labor_delta": 0,
+    "att_err": null
+  },
+  "hub10": {
+    "hub": 10,
+    "csv_labor": 10,
+    "csv_fte": 8,
+    "csv_os": 1,
+    "csv_bpo": 1,
+    "csv_present": 8,
+    "csv_scheduled": 8,
+    "csv_name": "50-HCM Thu Duc Hub",
+    "att_filtered": 12,
+    "ops_fm_lm_kept": 10,
+    "cook_labor": 10,
+    "cook_fte": 8,
+    "cook_os": 1,
+    "cook_bpo": 1,
+    "cook_present": 0,
+    "cook_scheduled": 0,
+    "metric_notes": "agency_id=0;cal_raw=0;att_raw=12;labor_source=attendance",
+    "gap_att_vs_kept": 2,
+    "gap_att_vs_cook_labor": 2,
+    "drop_reasons": {
+      "Security": 2
+    },
+    "drop_samples": [
+      {
+        "id": "S0000401726",
+        "name": "Võ Minh Thông",
+        "dept": "Security",
+        "profile": "Security",
+        "staff_type": "ops",
+        "agency": "LONGHAISECURITAS",
+        "contract": "Agency Full-time",
+        "event_station_id": 10,
+        "reason": "Security"
+      },
+      {
+        "id": "S0000388620",
+        "name": "Vũ Văn Đương",
+        "dept": "Security",
+        "profile": "Security",
+        "staff_type": "ops",
+        "agency": "LONGHAISECURITAS",
+        "contract": "Agency Full-time",
+        "event_station_id": 10,
+        "reason": "Security"
+      }
+    ],
+    "csv_vs_cook_labor_delta": 0,
+    "att_err": null
+  },
+  "name_hits": [],
+  "security_hubs": [
+    {
+      "hub": 10,
+      "name": "50-HCM Thu Duc Hub",
+      "gap": 2,
+      "drop_reasons": {
+        "Security": 2
+      },
+      "drop_samples": [
+        {
+          "id": "S0000401726",
+          "name": "Võ Minh Thông",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 10,
+          "reason": "Security"
+        },
+        {
+          "id": "S0000388620",
+          "name": "Vũ Văn Đương",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 10,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 12,
+      "ops_fm_lm_kept": 10,
+      "cook_labor": 10
+    },
+    {
+      "hub": 91,
+      "name": "50-HCM Binh Chanh/Phong Phu Hub",
+      "gap": 1,
+      "drop_reasons": {
+        "Security": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000189271",
+          "name": "Vương Long",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "YUKI",
+          "contract": "Agency Full-time",
+          "event_station_id": 91,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 15,
+      "ops_fm_lm_kept": 14,
+      "cook_labor": 14
+    },
+    {
+      "hub": 979,
+      "name": "50-HCM D9/Duong Dinh Hoi Hub",
+      "gap": 1,
+      "drop_reasons": {
+        "Security": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000188030",
+          "name": "Phạm Chí Công",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 979,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 9,
+      "ops_fm_lm_kept": 8,
+      "cook_labor": 8
+    },
+    {
+      "hub": 423,
+      "name": "50-HCM Thu Duc/Hiep Binh Phuoc Hub",
+      "gap": 4,
+      "drop_reasons": {
+        "Security": 4
+      },
+      "drop_samples": [
+        {
+          "id": "S0000256872",
+          "name": "Hồ Xuân Lộc",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "YUKI",
+          "contract": "Agency Full-time",
+          "event_station_id": 423,
+          "reason": "Security"
+        },
+        {
+          "id": "S0000376169",
+          "name": "Đặng Thanh Tình",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "YUKI",
+          "contract": "Agency Full-time",
+          "event_station_id": 423,
+          "reason": "Security"
+        },
+        {
+          "id": "S0000374738",
+          "name": "Huỳnh Văn Được",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "YUKI",
+          "contract": "Agency Full-time",
+          "event_station_id": 423,
+          "reason": "Security"
+        },
+        {
+          "id": "S0000353083",
+          "name": "Lê Trọng Nhân",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "YUKI",
+          "contract": "Agency Full-time",
+          "event_station_id": 423,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 55,
+      "ops_fm_lm_kept": 51,
+      "cook_labor": 51
+    },
+    {
+      "hub": 1775,
+      "name": "51-HCM Hoc Mon/Xuan Thoi Thuong Hub",
+      "gap": 1,
+      "drop_reasons": {
+        "Security": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000187632",
+          "name": "Bùi Đức Cường",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 1775,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 12,
+      "ops_fm_lm_kept": 11,
+      "cook_labor": 11
+    },
+    {
+      "hub": 2061,
+      "name": "51-HCM Go Vap/Le Duc Tho Hub",
+      "gap": 1,
+      "drop_reasons": {
+        "Security": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000229133",
+          "name": "Trịnh Văn Quỳnh",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 2061,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 10,
+      "ops_fm_lm_kept": 9,
+      "cook_labor": 9
+    },
+    {
+      "hub": 2396,
+      "name": "51-HCM D12/Le Thi Rieng Hub",
+      "gap": 2,
+      "drop_reasons": {
+        "Security": 1,
+        "TeaLady": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000421062",
+          "name": "Lê Huy Yến",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 2396,
+          "reason": "Security"
+        },
+        {
+          "id": "S0000188119",
+          "name": "Trịnh Thị Tho",
+          "dept": "Tea Lady",
+          "profile": "Tea Lady",
+          "staff_type": "ops",
+          "agency": "ANHDUONG",
+          "contract": "Agency Full-time",
+          "event_station_id": 2396,
+          "reason": "TeaLady"
+        }
+      ],
+      "att_filtered": 16,
+      "ops_fm_lm_kept": 14,
+      "cook_labor": 14
+    },
+    {
+      "hub": 2442,
+      "name": "51-HCM Cu Chi/Binh My Hub",
+      "gap": 1,
+      "drop_reasons": {
+        "Security": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000245484",
+          "name": "Trần Văn Trắng",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 2442,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 8,
+      "ops_fm_lm_kept": 7,
+      "cook_labor": 7
+    },
+    {
+      "hub": 2883,
+      "name": "51-HCM Tan Phu/Kenh Tan Hoa Hub",
+      "gap": 1,
+      "drop_reasons": {
+        "Security": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000299399",
+          "name": "Dương Hoàng Thiện",
+          "dept": "Security",
+          "profile": "FM/LM",
+          "staff_type": "ops",
+          "agency": "AGR",
+          "contract": "Agency Part-time",
+          "event_station_id": 2883,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 16,
+      "ops_fm_lm_kept": 15,
+      "cook_labor": 15
+    },
+    {
+      "hub": 4624,
+      "name": "51-HCM Hoc Mon/Thoi Tam Thon Hub",
+      "gap": 2,
+      "drop_reasons": {
+        "TeaLady": 1,
+        "Security": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000333602",
+          "name": "Trương Thị Mỹ  Thuyên ",
+          "dept": "Tea Lady",
+          "profile": "Tea Lady",
+          "staff_type": "ops",
+          "agency": "ANHDUONG",
+          "contract": "Agency Full-time",
+          "event_station_id": 4624,
+          "reason": "TeaLady"
+        },
+        {
+          "id": "S0000272650",
+          "name": "Nguyễn Văn Hiền",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 4624,
+          "reason": "Security"
+        }
+      ],
+      "att_filtered": 12,
+      "ops_fm_lm_kept": 10,
+      "cook_labor": 10
+    },
+    {
+      "hub": 6164,
+      "name": "51-HCM Cu Chi/Tan An Hoi Hub",
+      "gap": 2,
+      "drop_reasons": {
+        "Security": 1,
+        "TeaLady": 1
+      },
+      "drop_samples": [
+        {
+          "id": "S0000407966",
+          "name": "Lê Xuân Thể",
+          "dept": "Security",
+          "profile": "Security",
+          "staff_type": "ops",
+          "agency": "LONGHAISECURITAS",
+          "contract": "Agency Full-time",
+          "event_station_id": 6164,
+          "reason": "Security"
+        },
+        {
+          "id": "S0000408422",
+          "name": "Nguyễn  Thị Kim Loan",
+          "dept": "Tea Lady",
+          "profile": "Tea Lady",
+          "staff_type": "ops",
+          "agency": "HAPPYCLEAN",
+          "contract": "Agency Full-time",
+          "event_station_id": 6164,
+          "reason": "TeaLady"
+        }
+      ],
+      "att_filtered": 7,
+      "ops_fm_lm_kept": 5,
+      "cook_labor": 5
+    }
+  ]
+}

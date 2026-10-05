@@ -1,0 +1,7 @@
+[
+  {
+    "url": "https://spx.shopee.vn/api/admin/basicserver/current_user/station_list/?count=100&status_list=0&station_name=SDD",
+    "method": "GET",
+    "post": null
+  }
+]

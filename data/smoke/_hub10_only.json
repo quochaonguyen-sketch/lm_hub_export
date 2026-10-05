@@ -1,0 +1,50 @@
+{
+  "hub": 10,
+  "csv_labor": 10,
+  "csv_fte": 8,
+  "csv_os": 1,
+  "csv_bpo": 1,
+  "csv_present": 8,
+  "csv_scheduled": 8,
+  "csv_name": "50-HCM Thu Duc Hub",
+  "att_filtered": 12,
+  "ops_fm_lm_kept": 10,
+  "cook_labor": 10,
+  "cook_fte": 8,
+  "cook_os": 1,
+  "cook_bpo": 1,
+  "cook_present": 0,
+  "cook_scheduled": 0,
+  "metric_notes": "agency_id=0;cal_raw=0;att_raw=12;labor_source=attendance",
+  "gap_att_vs_kept": 2,
+  "gap_att_vs_cook_labor": 2,
+  "drop_reasons": {
+    "Security": 2
+  },
+  "drop_samples": [
+    {
+      "id": "S0000401726",
+      "name": "Võ Minh Thông",
+      "dept": "Security",
+      "profile": "Security",
+      "staff_type": "ops",
+      "agency": "LONGHAISECURITAS",
+      "contract": "Agency Full-time",
+      "event_station_id": 10,
+      "reason": "Security"
+    },
+    {
+      "id": "S0000388620",
+      "name": "Vũ Văn Đương",
+      "dept": "Security",
+      "profile": "Security",
+      "staff_type": "ops",
+      "agency": "LONGHAISECURITAS",
+      "contract": "Agency Full-time",
+      "event_station_id": 10,
+      "reason": "Security"
+    }
+  ],
+  "csv_vs_cook_labor_delta": 0,
+  "att_err": null
+}

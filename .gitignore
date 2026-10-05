@@ -1,3 +1,14 @@
 ﻿# Browser/local runtime state
-data/chrome_*
+py -3.14 export_lm_hubs.py --apis roster --workers 2
 cookies/
+
+# Google credentials (never commit)
+secrets/
+credentials/
+*service_account*.json
+token.json
+google_oauth_token.json
+client_secret*.json
+
+# Local env overrides (sheet IDs). Keep .env.example.
+.env

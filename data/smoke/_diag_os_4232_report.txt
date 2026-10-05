@@ -1,0 +1,99 @@
+SOURCE live evening dump 2026-10-02; calendar agency0/9 + attendance
+change_station note: live pull got invalid station for 4232; att_live=12 att_old=11
+
+=== LIVE calendar_agency_0 ===
+ops FM/LM=108 labor={'BPO': 45, 'FTE': 60, 'OS': 3}
+contracts={'Agency Full-time Skilled': 25, 'Inhouse-Full-time': 67, 'Inhouse Full-time Skilled': 13, 'Agency Part-time': 3}
+agencies={'GRG': 32, 'in-house': 60, 'SKT': 7, 'AGR': 1, 'SPX Full-time': 7, 'MBB': 1}
+unique OS=3
+  01. Huỳnh Ngọc Tiển | ops_id=Ops24900 | agency=GRG | contract=Agency Part-time | event_list=False | status=2
+  02. Lê Đăng Khoa | ops_id=Ops203103 | agency=SKT | contract=Agency Part-time | event_list=False | status=2
+  03. Nguyễn Thành Danh | ops_id=Ops114283 | agency=SKT | contract=Agency Part-time | event_list=False | status=2
+
+=== LIVE calendar_agency_9 ===
+ops FM/LM=60 labor={'FTE': 60}
+contracts={'Inhouse-Full-time': 60}
+agencies={'in-house': 60}
+unique OS=0
+
+=== LIVE calendar_agency_0 BPO list ===
+ops FM/LM=108 labor={'BPO': 45, 'FTE': 60, 'OS': 3}
+contracts={'Agency Full-time Skilled': 25, 'Inhouse-Full-time': 67, 'Inhouse Full-time Skilled': 13, 'Agency Part-time': 3}
+agencies={'GRG': 32, 'in-house': 60, 'SKT': 7, 'AGR': 1, 'SPX Full-time': 7, 'MBB': 1}
+unique BPO=45
+  01. 52HCM01maychamcong01@shopeemobile-external.com | ops_id=Ops154604 | agency=SPX Full-time | contract=Inhouse-Full-time | event_list=False | status=2
+  02. 52HCM01maychamcong03@shopeemobile-external.com | ops_id=Ops154606 | agency=SPX Full-time | contract=Inhouse-Full-time | event_list=False | status=2
+  03. 52HCM01maychamcong04@shopeemobile-external.com | ops_id=Ops154607 | agency=SPX Full-time | contract=Inhouse-Full-time | event_list=False | status=2
+  04. 52HCM01maychamcong05@shopeemobile-external.com | ops_id=Ops154608 | agency=SPX Full-time | contract=Inhouse-Full-time | event_list=False | status=2
+  05. 52HCM01maychamcong06@shopeemobile-external.com | ops_id=Ops154609 | agency=SPX Full-time | contract=Inhouse-Full-time | event_list=False | status=2
+  06. 52HCM01maychamcong07@shopeemobile-external.com | ops_id=Ops154610 | agency=SPX Full-time | contract=Inhouse-Full-time | event_list=False | status=2
+  07. 52HCM01maychamcong08@shopeemobile-external.com | ops_id=Ops154611 | agency=SPX Full-time | contract=Inhouse-Full-time | event_list=False | status=2
+  08. Chế Hoàng Nghi Khang | ops_id=Ops203875 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=True | status=2
+  09. Doãn Văn Thắng | ops_id=Ops222423 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+  10. Hoàng Hữu Thái | ops_id=Ops210520 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  11. Hà Minh Nhựt | ops_id=Ops224135 | agency=GRG | contract=Agency Full-time Skilled | event_list=True | status=2
+  12. Hồ Minh Hòa | ops_id=Ops122763 | agency=GRG | contract=Agency Full-time Skilled | event_list=True | status=2
+  13. Lê  Hoàng  Phúc | ops_id=Ops215172 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+  14. Lê Nhựt Thiên | ops_id=Ops249457 | agency=SKT | contract=Agency Full-time Skilled | event_list=False | status=2
+  15. Lê Quang Vinh | ops_id=Ops228979 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+  16. Lương Thị Tuyết Nhã | ops_id=Ops198018 | agency=AGR | contract=Agency Full-time Skilled | event_list=True | status=2
+  17. Mã Quốc Việt | ops_id=Ops209301 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  18. Nguyễn Diệp Tuấn Anh | ops_id=Ops257714 | agency=GRG | contract=Agency Full-time Skilled | event_list=True | status=2
+  19. Nguyễn Hoàng Khánh Uyên | ops_id=Ops205613 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  20. Nguyễn Hoàng Long | ops_id=Ops208977 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  21. Nguyễn Hồng Phú | ops_id=Ops37394 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  22. Nguyễn Hữu Ước | ops_id=Ops200457 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=1
+  23. Nguyễn Ngọc Thanh Thảo | ops_id=Ops206139 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  24. Nguyễn Quốc Tam | ops_id=Ops206330 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=1
+  25. Nguyễn Thị Thùy Trang | ops_id=Ops208979 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  26. Nguyễn Thị Trà My  | ops_id=Ops65470 | agency=MBB | contract=Agency Full-time Skilled | event_list=False | status=1
+  27. Nguyễn Triều Tấn Tài | ops_id=Ops227871 | agency=SKT | contract=Agency Full-time Skilled | event_list=False | status=1
+  28. Nguyễn Trương Quốc Thái | ops_id=Ops164879 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=1
+  29. Nguyễn Văn Dũng | ops_id=Ops215324 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+  30. Ngô Quang Trung | ops_id=Ops227985 | agency=GRG | contract=Agency Full-time Skilled | event_list=True | status=2
+  31. Phan Hiền Thiện Chí | ops_id=Ops211446 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+  32. Phạm Lê Văn | ops_id=Ops211759 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=1
+  33. Phạm Ngọc Thạch | ops_id=Ops222693 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+  34. Phạm Thanh Hải | ops_id=Ops232850 | agency=GRG | contract=Agency Full-time Skilled | event_list=True | status=2
+  35. Triệu  Khánh Bình | ops_id=Ops249461 | agency=SKT | contract=Agency Full-time Skilled | event_list=False | status=2
+  36. Trương  Kim Song Ngân | ops_id=Ops204830 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=True | status=2
+  37. Trương Hiệu Khanh | ops_id=Ops222539 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+  38. Trương Hoàng Thiện | ops_id=Ops205035 | agency=SKT | contract=Agency Full-time Skilled | event_list=False | status=1
+  39. Trương Phú Tuấn Anh | ops_id=Ops208970 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  40. Trần Gia Kiệt | ops_id=Ops38792 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=True | status=2
+  41. Trần Gia Lâm | ops_id=Ops230061 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=1
+  42. Trần Xuân Nhân | ops_id=Ops227873 | agency=SKT | contract=Agency Full-time Skilled | event_list=False | status=1
+  43. Võ Minh Kiệt | ops_id=Ops205503 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=False | status=1
+  44. Võ Thị Hồng Hạnh | ops_id=Ops205095 | agency=GRG | contract=Inhouse Full-time Skilled | event_list=True | status=2
+  45. Đỗ  Đăng  Khoa | ops_id=Ops211442 | agency=GRG | contract=Agency Full-time Skilled | event_list=False | status=2
+
+agency0 WITH event_list ops FM/LM n=49 labor={'BPO': 10, 'FTE': 39}
+OS with event_list today: 0
+
+OS shells without event_list: 3
+  01. Huỳnh Ngọc Tiển | Ops24900 | GRG | Agency Part-time
+  02. Lê Đăng Khoa | Ops203103 | SKT | Agency Part-time
+  03. Nguyễn Thành Danh | Ops114283 | SKT | Agency Part-time
+
+filter kept0=47 kept9=37 pt_labor_rows=3
+
+--- filter_attendance_for_station signature ---
+(all_rows, station_id)
+att_live filtered for 4232: 0
+  ops labor mix: {}
+att_old filtered for 4232: 0
+  ops labor mix: {}
+COOK cal0+shells NO att: {'scheduled_count': 47, 'present_count': 43, 'late_count': 25, 'fte_count': 37, 'os_count': 3, 'bpo_count': 10, 'metric_notes': 'agency_id=9;cal_raw=47;att_raw=0;labor_source=calendar+attendance'}
+COOK cal9 NO att: {'scheduled_count': 37, 'present_count': 33, 'late_count': 22, 'fte_count': 37, 'os_count': 0, 'bpo_count': 0, 'metric_notes': 'agency_id=9;cal_raw=37;att_raw=0;labor_source=calendar'}
+
+=== CSV snapshots for hub 4232 ===
+latest 18:02 agency9 default: FTE=37 OS=0 BPO=0 scheduled=37
+smoke4232_attfix 17:05: FTE=37 OS=3 BPO=10 scheduled=47
+debug 15:59: FTE=39 OS=0 BPO=10 scheduled=49
+
+=== VERDICT ===
+Hub 4232 does NOT have >10 OS under current mapping.
+agency_id=0 calendar: only 3 unique OS (Agency Part-time).
+agency_id=0 has many BPO (~45 Agency Full-time*) — if someone said >10 OS they likely meant BPO or OS+BPO.
+agency_id=9 (current default export): OS=0 BPO=0 because OS/BPO are non-in-house agencies.
+Latest CSV 18:02 OS=0 is expected with default agency_id=9 + attendance-prefer (incomplete att -> calendar labor from agency9 = all FTE).

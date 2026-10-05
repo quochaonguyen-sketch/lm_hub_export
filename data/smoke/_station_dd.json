@@ -1,0 +1,26 @@
+{
+  "id": 12,
+  "result": {
+    "result": {
+      "type": "object",
+      "value": [
+        {
+          "cls": "ssc-select station-switcher ssc-select-custom-reference",
+          "text": "50-HCM Thu Duc Hub",
+          "display": "flex"
+        },
+        {
+          "cls": "ssc-option-wrapper with-header station-switcher-dropdown",
+          "text": "            \n    \n    No data  ",
+          "display": "block"
+        },
+        {
+          "cls": "station-label",
+          "text": "50-HCM Thu Duc Hub",
+          "display": "flex"
+        }
+      ]
+    }
+  },
+  "sessionId": "D953944676CC895ED306FEB0062E3723"
+}

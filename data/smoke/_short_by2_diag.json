@@ -1,0 +1,428 @@
+[
+  {
+    "hub": 10,
+    "csv": {
+      "sched": 8,
+      "present": 8,
+      "fte": 8,
+      "os": 1,
+      "bpo": 1,
+      "labor": 10,
+      "name": "50-HCM Thu Duc Hub",
+      "fetched_at": "2026-10-02 21:49:00"
+    },
+    "att_raw": 12,
+    "att_filtered": 12,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 10,
+    "dropped_n": 2,
+    "gap_raw_vs_ops": 2,
+    "drop_reason_counts": {
+      "dept=Security": 2
+    },
+    "dropped": [
+      {
+        "biz_staff_id": "Ops244789",
+        "staff_name": "Võ Minh Thông",
+        "department_name": "Security",
+        "event_department_id": 46,
+        "profile_department_name": "Security",
+        "staff_type_name": "Ops",
+        "agency": "LONGHAISECURITAS",
+        "contract_type": "Agency Full-time",
+        "event_station_id": 10,
+        "drop_reasons": [
+          "dept=Security"
+        ]
+      },
+      {
+        "biz_staff_id": "Ops234790",
+        "staff_name": "Vũ Văn Đương",
+        "department_name": "Security",
+        "event_department_id": 46,
+        "profile_department_name": "Security",
+        "staff_type_name": "Ops",
+        "agency": "LONGHAISECURITAS",
+        "contract_type": "Agency Full-time",
+        "event_station_id": 10,
+        "drop_reasons": [
+          "dept=Security"
+        ]
+      }
+    ],
+    "recook": {
+      "fte": 8,
+      "os": 1,
+      "bpo": 1,
+      "labor": 10,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=12;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 25,
+    "csv": {
+      "sched": 11,
+      "present": 9,
+      "fte": 10,
+      "os": 12,
+      "bpo": 2,
+      "labor": 24,
+      "name": "50-HCM D8 Hub",
+      "fetched_at": "2026-10-02 21:48:49"
+    },
+    "att_raw": 24,
+    "att_filtered": 24,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 24,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 10,
+      "os": 12,
+      "bpo": 2,
+      "labor": 24,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=24;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 26,
+    "csv": {
+      "sched": 15,
+      "present": 15,
+      "fte": 14,
+      "os": 10,
+      "bpo": 4,
+      "labor": 28,
+      "name": "50-HCM D4 Hub",
+      "fetched_at": "2026-10-02 21:48:42"
+    },
+    "att_raw": 28,
+    "att_filtered": 28,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 28,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 14,
+      "os": 10,
+      "bpo": 4,
+      "labor": 28,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=28;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 58,
+    "csv": {
+      "sched": 10,
+      "present": 9,
+      "fte": 8,
+      "os": 8,
+      "bpo": 1,
+      "labor": 17,
+      "name": "50-HCM D7 Hub",
+      "fetched_at": "2026-10-02 21:48:46"
+    },
+    "att_raw": 17,
+    "att_filtered": 17,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 17,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 8,
+      "os": 8,
+      "bpo": 1,
+      "labor": 17,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=17;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 91,
+    "csv": {
+      "sched": 9,
+      "present": 8,
+      "fte": 8,
+      "os": 4,
+      "bpo": 2,
+      "labor": 14,
+      "name": "50-HCM Binh Chanh/Phong Phu Hub",
+      "fetched_at": "2026-10-02 21:48:22"
+    },
+    "att_raw": 15,
+    "att_filtered": 15,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 14,
+    "dropped_n": 1,
+    "gap_raw_vs_ops": 1,
+    "drop_reason_counts": {
+      "dept=Security": 1
+    },
+    "dropped": [
+      {
+        "biz_staff_id": "Ops89359",
+        "staff_name": "Vương Long",
+        "department_name": "Security",
+        "event_department_id": 46,
+        "profile_department_name": "Security",
+        "staff_type_name": "Ops",
+        "agency": "YUKI",
+        "contract_type": "Agency Full-time",
+        "event_station_id": 91,
+        "drop_reasons": [
+          "dept=Security"
+        ]
+      }
+    ],
+    "recook": {
+      "fte": 8,
+      "os": 4,
+      "bpo": 2,
+      "labor": 14,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=15;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 93,
+    "csv": {
+      "sched": 8,
+      "present": 8,
+      "fte": 8,
+      "os": 4,
+      "bpo": 0,
+      "labor": 12,
+      "name": "50-HCM Thu Duc/Linh Trung Hub",
+      "fetched_at": "2026-10-02 21:49:05"
+    },
+    "att_raw": 12,
+    "att_filtered": 12,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 12,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 8,
+      "os": 4,
+      "bpo": 0,
+      "labor": 12,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=12;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 166,
+    "csv": {
+      "sched": 12,
+      "present": 12,
+      "fte": 12,
+      "os": 11,
+      "bpo": 0,
+      "labor": 23,
+      "name": "50-HCM Binh Chanh/Vinh Loc Hub",
+      "fetched_at": "2026-10-02 21:48:26"
+    },
+    "att_raw": 23,
+    "att_filtered": 23,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 23,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 12,
+      "os": 11,
+      "bpo": 0,
+      "labor": 23,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=23;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 196,
+    "csv": {
+      "sched": 8,
+      "present": 8,
+      "fte": 7,
+      "os": 2,
+      "bpo": 1,
+      "labor": 10,
+      "name": "50-HCM Nha Be Hub",
+      "fetched_at": "2026-10-02 21:48:54"
+    },
+    "att_raw": 10,
+    "att_filtered": 10,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 10,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 7,
+      "os": 2,
+      "bpo": 1,
+      "labor": 10,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=10;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 302,
+    "csv": {
+      "sched": 7,
+      "present": 7,
+      "fte": 7,
+      "os": 0,
+      "bpo": 0,
+      "labor": 7,
+      "name": "50-HCM Binh Chanh/Le Minh Xuan Hub",
+      "fetched_at": "2026-10-02 21:48:22"
+    },
+    "error": "change_station: invalid station"
+  },
+  {
+    "hub": 4232,
+    "csv": {
+      "sched": 47,
+      "present": 43,
+      "fte": 37,
+      "os": 3,
+      "bpo": 10,
+      "labor": 50,
+      "name": "52-HCM SDD-01 Hub",
+      "fetched_at": "2026-10-02 21:50:22"
+    },
+    "error": "change_station: invalid station"
+  },
+  {
+    "hub": 2011,
+    "csv": {
+      "sched": 7,
+      "present": 6,
+      "fte": 6,
+      "os": 1,
+      "bpo": 1,
+      "labor": 8,
+      "name": "51-HCM Binh Chanh/Vinh Loc A Hub",
+      "fetched_at": "2026-10-02 21:49:12"
+    },
+    "att_raw": 8,
+    "att_filtered": 8,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 8,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 6,
+      "os": 1,
+      "bpo": 1,
+      "labor": 8,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=8;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 912,
+    "csv": {
+      "sched": 11,
+      "present": 11,
+      "fte": 10,
+      "os": 8,
+      "bpo": 2,
+      "labor": 20,
+      "name": "50-HCM Binh Thanh/VTB Hub",
+      "fetched_at": "2026-10-02 21:48:32"
+    },
+    "att_raw": 20,
+    "att_filtered": 20,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 20,
+    "dropped_n": 0,
+    "gap_raw_vs_ops": 0,
+    "drop_reason_counts": {},
+    "dropped": [],
+    "recook": {
+      "fte": 10,
+      "os": 8,
+      "bpo": 2,
+      "labor": 20,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=20;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 168,
+    "csv": {
+      "sched": 5,
+      "present": 5,
+      "fte": 4,
+      "os": 6,
+      "bpo": 1,
+      "labor": 11,
+      "name": "50-HCM D2 Hub",
+      "fetched_at": "2026-10-02 21:48:39"
+    },
+    "att_raw": 12,
+    "att_filtered": 12,
+    "wrong_event_station_n": 0,
+    "ops_fm_lm": 11,
+    "dropped_n": 1,
+    "gap_raw_vs_ops": 1,
+    "drop_reason_counts": {
+      "dept=Tea Lady": 1
+    },
+    "dropped": [
+      {
+        "biz_staff_id": "Ops88911",
+        "staff_name": "Lê Kim Vân",
+        "department_name": "Tea Lady",
+        "event_department_id": 47,
+        "profile_department_name": "Tea Lady",
+        "staff_type_name": "Ops",
+        "agency": "ANHDUONG",
+        "contract_type": "Agency Full-time",
+        "event_station_id": 168,
+        "drop_reasons": [
+          "dept=Tea Lady"
+        ]
+      }
+    ],
+    "recook": {
+      "fte": 4,
+      "os": 6,
+      "bpo": 1,
+      "labor": 11,
+      "sched": 0,
+      "notes": "agency_id=0;cal_raw=0;att_raw=12;labor_source=attendance"
+    }
+  },
+  {
+    "hub": 41,
+    "csv": {
+      "sched": 14,
+      "present": 14,
+      "fte": 14,
+      "os": 0,
+      "bpo": 0,
+      "labor": 14,
+      "name": "50-HCM Binh Tan Hub",
+      "fetched_at": "2026-10-02 21:48:29"
+    },
+    "error": "change_station: invalid station"
+  }
+]

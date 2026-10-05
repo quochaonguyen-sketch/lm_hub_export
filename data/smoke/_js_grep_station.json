@@ -1,0 +1,145 @@
+{
+  "id": 10,
+  "result": {
+    "result": {
+      "type": "object",
+      "value": {
+        "script_n": 29,
+        "scripts": [
+          "version_config_live_sg.js",
+          "pdf.min.js",
+          "internal-sfu.js",
+          "CLodopfuncs.js?priority=3",
+          "CLodopfuncs.js?priority=2",
+          "CLodopfuncs.js?priority=1",
+          "js?key=AIzaSyBn29lNrcwNxP3LxMSF88rVuPHcKXDuvxQ&libraries=geometry,places&callback=initMap",
+          "index.js",
+          "vue.min.js",
+          "vue-router.min.js",
+          "axios.min.js",
+          "echarts.min.js",
+          "vue-echarts.min.js",
+          "vue-i18n.min.js",
+          "vuex.min.js",
+          "ssc-ui-vue.min.js",
+          "vue-composition-api.min.js",
+          "react.production.min.js",
+          "react-dom.production.min.js",
+          "react-router-dom.min.js",
+          "history.min.js",
+          "react-is.min.js",
+          "ssc-icons-react.min.js",
+          "ssc-ui-react-with-locales.min.js",
+          "react-pro-components.min.js",
+          "utility-vendor.505e979f.js",
+          "babel-runtime.a92d37d2.js",
+          "5666.a5c4c864.js",
+          "index.cf593e2f.js"
+        ],
+        "hits": [
+          {
+            "src": "https://sls.sp-cdn.shopee.com/api/v4/69067583/spx-gray-service/spx-mgmt-dashboard/version_config_live_sg.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/lib/pdfjs/3.2.146/pdf.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/internal-fu/default/internal-sfu.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "http://localhost:8000/CLodopfuncs.js?priority=3",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "http://localhost:18000/CLodopfuncs.js?priority=2",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://localhost:8443/CLodopfuncs.js?priority=1",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://maps.googleapis.com/maps/api/js?key=AIzaSyBn29lNrcwNxP3LxMSF88rVuPHcKXDuvxQ&libraries=geometry,places&callback=initMap",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/switch-variable/0.0.1/index.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/vue/2.6.14/vue.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/vue-router/3.5.2/vue-router.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/axios/0.19.2/axios.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/echarts/5.3.2/echarts.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/vue-echarts/4.0.3/vue-echarts.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/vue-i18n/8.24.4/vue-i18n.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/vuex/3.6.2/vuex.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/ssc-ui-vue/2.1.10/ssc-ui-vue.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/vue-composition-api/1.7.0-fix-leak/vue-composition-api.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/react/17.0.2/react.production.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/react-dom/17.0.2/react-dom.production.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/react-router-dom/5.3.4/react-router-dom.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/history/4.10.1/history.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/react-is/17.0.2/react-is.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/ssc-icons-react/1.1.7/ssc-icons-react.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/ssc-ui-react/1.1.121/ssc-ui-react-with-locales.min.js",
+            "error": "TypeError: Failed to fetch"
+          },
+          {
+            "src": "https://deo.shopeemobile.com/shopee/spx-fe-lib/react-pro-components/1.1.55/react-pro-components.min.js",
+            "error": "TypeError: Failed to fetch"
+          }
+        ]
+      }
+    }
+  },
+  "sessionId": "D95EC33A7D367BDDA6305FE1460028E4"
+}

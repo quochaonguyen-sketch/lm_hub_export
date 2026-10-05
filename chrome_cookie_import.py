@@ -181,7 +181,20 @@ def cdp_version(port: int) -> dict | None:
 
 
 def cdp_call(ws_url: str, method: str, params: dict | None = None, timeout: float = 15):
-    import websocket  # websocket-client
+    try:
+        import websocket  # websocket-client
+    except ImportError as exc:
+        raise ImportFail(
+            "websocket-client is required; install it with: "
+            "py -3.14 -m pip uninstall -y websocket websocket-client; "
+            "py -3.14 -m pip install websocket-client"
+        ) from exc
+    if not hasattr(websocket, "create_connection"):
+        origin = getattr(websocket, "__file__", "<unknown>")
+        raise ImportFail(
+            f"Imported websocket from {origin}, but it has no create_connection. "
+            "Remove the 'websocket' package and install 'websocket-client'."
+        )
     ws = websocket.create_connection(ws_url, timeout=timeout, suppress_origin=True)
     try:
         ws.send(json.dumps({"id": 1, "method": method, "params": params or {}}))

@@ -1,0 +1,71 @@
+{
+  "id": 12,
+  "result": {
+    "result": {
+      "type": "object",
+      "value": [
+        {
+          "url": "/api/wfm/admin/attendance/clock/statistic_data_list?pageno=1&count=50&staff_type=2&start_time=1790874000&end_time=1790960399",
+          "method": "GET",
+          "status": 200,
+          "body": "{\"retcode\":0,\"message\":\"success\",\"data\":{\"list\":[{\"id\":26258611,\"date\":\"2026-10-02\",\"staff_id\":\"S0000362587\",\"biz_staff_id\":\"Ops214185\",\"staff_type\":2,\"staff_type_name\":\"Ops\",\"function_type\":100,\"profile_function_type_id\":0,\"profile_function_type_name\":\"\",\"event_department_id\":44,\"department_name\":\"FM/LM\",\"profile_department_id\":44,\"profile_department_name\":\"FM/LM\",\"staff_name\":\"Trần Khánh Duy\",\"staff_email\":\"-\",\"station_id\":10,\"station_name\":\"50-HCM Thu Duc Hub\",\"event_station_id\":10,\"event_station_name\":\"50-HCM Thu Duc Hub\",\"event_id\":\"VNO10EVENT2610020003\",\"start_time\":1790931600,\"end_time\":1790956800,\"clock_in_record_id\":31272311,\"clock_out_record_id\":0,\"clock_in_time\":1790931168,\"clock_out_time\":0,\"clock_in_time_str\":\"15:52:48\",\"clock_in_date_str\":\"2026-10-02\",\"clock_in_status\":1,\"clo"
+        },
+        {
+          "url": "/api/wfm/admin/attendance/clock/statistic_data_list?pageno=1&count=50&staff_type=2&start_time=1790874000&end_time=1790960399&station_id=4232",
+          "method": "GET",
+          "status": 200,
+          "body": "{\"retcode\":0,\"message\":\"success\",\"data\":{\"total\":0,\"pageno\":1,\"count\":50}}\n"
+        },
+        {
+          "url": "/api/admin/base/change_station",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        },
+        {
+          "url": "/api/admin/base/change_station",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        },
+        {
+          "url": "/api/admin/account/change_station",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        },
+        {
+          "url": "/api/admin/account/change_station",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        },
+        {
+          "url": "/api/fms/admin/base/change_station",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        },
+        {
+          "url": "/api/fms/admin/base/change_station",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        },
+        {
+          "url": "/api/admin/base/station/change",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        },
+        {
+          "url": "/api/admin/base/station/change",
+          "method": "POST",
+          "status": 405,
+          "body": "<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body>\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+        }
+      ]
+    }
+  },
+  "sessionId": "275EF35511E90B01E572693AE1E49807"
+}

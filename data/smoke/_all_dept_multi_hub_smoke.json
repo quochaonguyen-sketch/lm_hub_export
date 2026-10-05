@@ -1,0 +1,37 @@
+{
+  "166": {
+    "n_filtered": 23,
+    "n_ops_fm_lm": 23,
+    "err": null,
+    "all_dept_rows": [],
+    "drop_dept_counts": {}
+  },
+  "2011": {
+    "n_filtered": 8,
+    "n_ops_fm_lm": 8,
+    "err": null,
+    "all_dept_rows": [],
+    "drop_dept_counts": {}
+  },
+  "58": {
+    "n_filtered": 17,
+    "n_ops_fm_lm": 17,
+    "err": null,
+    "all_dept_rows": [],
+    "drop_dept_counts": {}
+  },
+  "25": {
+    "n_filtered": 24,
+    "n_ops_fm_lm": 24,
+    "err": null,
+    "all_dept_rows": [],
+    "drop_dept_counts": {}
+  },
+  "4232": {
+    "n_filtered": 0,
+    "n_ops_fm_lm": 0,
+    "err": "change_station: invalid station",
+    "all_dept_rows": [],
+    "drop_dept_counts": {}
+  }
+}
