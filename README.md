@@ -1,4 +1,4 @@
-# LM Hub Export (standalone)
+﻿# LM Hub Export (standalone)
 
 Thu muc **doc lap** - **khong** dung cookie / `paths` / `cookie_login` cua `C:\SPX_Launcher`
 (tru khi ban bat `--launcher-cookie`, OFF mac dinh).
@@ -378,4 +378,38 @@ chrome_cookie_import.bat
 Lenh khac: --cdp, --import-json FILE, --status, --dry-run.
 
 Ghi **chi** cookies\cookies.json. Khong sua cookie SPX_Launcher.
+
+## Cookie launcher (tu kiem tra + refresh cookie + export dinh ky)
+
+```bat
+cd /d C:\lm_hub_export
+cookie_launcher.bat
+```
+(= `py -3.14 cookie_launcher.py`, de cua so mo; Ctrl+C de dung.)
+
+Moi 10 phut launcher:
+1. Doc han `fms_user_skey` trong `cookies\cookies.json` va goi thu 1 API SPX read-only.
+   In 1 dong: `[11:52] Cookie OK | con 5.2 gio | next check 12:02`.
+2. Cookie het han / API tu choi / con duoi 30 phut: chi dong **Chrome SPX rieng**
+   (profile `data\chrome_debug_profile`, port 9222; Chrome ban dang dung KHONG bi dong),
+   mo lai, lay cookie qua CDP, kiem tra API roi moi ghi `cookies.json` (co backup).
+3. Neu session SPX het han han (mo lai van ra trang login): popup + beep,
+   login SPX trong cua so Chrome SPX vua mo; launcher tu lay cookie trong 10 phut.
+   Qua 10 phut chua login thi thu lai o lan kiem tra sau.
+4. Moi lan cookie OK: chay `export_lm_hubs.py --apis all` (tat ca API).
+   Export dang chay thi khong mo them; export lau hon 10 phut thi kiem tra ngay sau khi xong.
+
+Log: `output\cookie_launcher.log` (ca log export). Khong in gia tri cookie.
+
+| Flag | Y nghia |
+|---|---|
+| `--interval-min N` | Phut giua 2 lan kiem tra (mac dinh 10) |
+| `--refresh-before-min N` | Refresh khi cookie con duoi N phut (mac dinh 30) |
+| `--wait-login-sec N` | Doi login SPX toi da N giay (mac dinh 600) |
+| `--no-export` | Chi kiem tra / refresh cookie, khong chay export |
+| `--once` | Chay 1 lan roi thoat (test) |
+| `--show-export-output` | In log export ra man hinh (mac dinh chi ghi file log) |
+| `--port N` | CDP port Chrome SPX rieng (mac dinh 9222) |
+
+Vi du: `cookie_launcher.bat --once --no-export` (chi kiem tra cookie 1 lan).
 
