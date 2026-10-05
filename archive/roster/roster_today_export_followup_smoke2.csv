@@ -1,5 +1,0 @@
-﻿station_id,station_name,event_date_iso,scheduled_count,present_count,late_count,fte_count,os_count,bpo_count,attendance_pct,fetched_at
-10,50-HCM Thu Duc Hub,2026-10-02,8,6,3,8,0,0,75.0,2026-10-02 13:55:37
-41,hub-41,2026-10-02,14,12,0,14,0,0,85.71,2026-10-02 13:55:37
-2094,hub-2094,2026-10-02,37,31,0,32,4,1,83.78,2026-10-02 13:55:46
-912,50-HCM Binh Thanh/VTB Hub,2026-10-02,14,10,0,10,2,2,71.43,2026-10-02 13:55:46

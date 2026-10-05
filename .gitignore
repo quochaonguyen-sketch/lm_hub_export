@@ -1,5 +1,4 @@
 ﻿# Browser/local runtime state
-py -3.14 export_lm_hubs.py --apis roster --workers 2
 cookies/
 
 # Google credentials (never commit)
@@ -12,3 +11,8 @@ client_secret*.json
 
 # Local env overrides (sheet IDs). Keep .env.example.
 .env
+
+# Python cache / runtime output
+__pycache__/
+.pytest_cache/
+output/

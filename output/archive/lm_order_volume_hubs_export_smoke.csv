@@ -1,3 +1,0 @@
-﻿station_id,station_name,lm_hub_inbounded_order_qty_eod,lm_hub_delivered_order_qty_eod,data_from_time,lm_hub_avg_daily_delivered_order_qty_7d,lm_hub_avg_daily_returned_to_seller_order_qty_7d,lm_hub_return_inbounded_order_qty_eod,lm_hub_returned_to_seller_order_qty_eod,max_time,update_at_timestamp,fetched_at
-93,50-HCM Thu Duc/Linh Trung Hub,6115,8444,1790787600,8163,,0,0,1790850051,1790850000,2026-10-01 17:23:39
-2107,51-HCM D9/Phu Huu Hub,1856,2218,1790787600,2222,,0,0,1790850051,1790850000,2026-10-01 17:23:39
