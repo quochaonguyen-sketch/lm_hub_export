@@ -8,6 +8,7 @@ credentials/
 token.json
 google_oauth_token.json
 client_secret*.json
+data/chrome_debug_profile/
 
 # Local env overrides (sheet IDs). Keep .env.example.
 .env
