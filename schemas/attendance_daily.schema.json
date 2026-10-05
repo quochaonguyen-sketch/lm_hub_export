@@ -1,0 +1,137 @@
+[
+  {
+    "name": "date",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "station_id",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "station_name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "data_status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "error",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "api_total",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "raw_rows",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "kept_rows",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dropped_rows",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "total_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "present_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "absent_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "leave_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "rest_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "unknown_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "late_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "claim_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_clock_in_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_clock_out_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_identity_people",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "total_actual_hours",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "total_planned_hours",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "total_break_time",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "total_ot_applied",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "total_ot_worked",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_actual_hours_rows",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_planned_hours_rows",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  }
+]

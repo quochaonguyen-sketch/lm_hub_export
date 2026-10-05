@@ -432,3 +432,72 @@ Log: `output\cookie_launcher.log` (ca log export). Khong in gia tri cookie.
 | `--start-delayed` | Chờ đủ chu kỳ trước lượt đầu tiên |
 
 Vi du: `cookie_launcher.bat --once --no-export` (chi kiem tra cookie 1 lan).
+
+## Attendance D-1 và lịch sử một tháng
+
+Script riêng: `export_attendance_history.py`, dùng cookie và danh sách hub giống `export_lm_hubs.py`.
+Chỉ xuất file cục bộ, không ghi Google Sheets. Dừng launcher/export đang chạy trước khi chạy lịch sử:
+các API attendance dùng chung hub hiện tại của phiên SPX. Script đổi từng hub tuần tự rồi khôi phục hub ban đầu.
+
+```bat
+export_attendance_history.bat
+```
+
+Mặc định lấy mọi Ops (`staff_type=2`) trong `data\hubs.csv`, từ hôm qua lùi một tháng lịch,
+không lấy hôm nay. Ví dụ chạy ngày 05/10/2026: lấy **05/09/2026 đến 04/10/2026**, bao gồm cả hai đầu.
+Nếu muốn đúng 30 ngày, dùng `--days 30`; lọc Ops FM/LM giống roster D0 bằng `--scope fm-lm`.
+
+```bat
+py -3.14 export_attendance_history.py --days 30 --scope fm-lm
+py -3.14 export_attendance_history.py --station-ids 93,4232 --days 2
+py -3.14 export_attendance_history.py --date-from 2026-09-05 --date-to 2026-10-04
+```
+
+Mặc định **4 worker** lấy các ngày của cùng hub song song, mỗi worker nghỉ **0,05 giây** sau một ngày.
+Mỗi worker dùng HTTP session riêng và tái sử dụng kết nối. Script đợi mọi request của hub hiện tại hoàn tất
+trước khi đổi hub tiếp theo hoặc khôi phục hub ban đầu. File kết quả vẫn sắp theo ngày/hub.
+Tăng lên 8 worker bằng lệnh sau; dùng `--workers 1` để chạy tuần tự:
+
+```bat
+py -3.14 export_attendance_history.py --workers 8 --request-delay 0.05
+```
+
+Kết quả ở `output\attendance\<ngày đầu>_<ngày cuối>\`:
+
+| File | Nội dung |
+|---|---|
+| `attendance_daily_summary.csv` | Một dòng/ngày/hub: tổng người, đi làm, vắng, nghỉ phép, ngày nghỉ, đi muộn, claim OT và giờ |
+| `attendance_staff_daily.csv` | Một dòng/người/ngày/hub: trạng thái, giờ làm, giờ kế hoạch, nghỉ giữa ca, OT, kênh chấm công |
+| `attendance_period_summary.csv` | Tổng cả kỳ theo hub: số người duy nhất, lượt người/ngày và tổng giờ |
+| `attendance_staff_period.csv` | Tổng ngày làm/nghỉ/claim và giờ theo nhân viên/hub |
+| `attendance_overall_summary.csv` | Tổng toàn bộ hub, số người duy nhất được khử trùng giữa các hub |
+| `attendance_claim_summary.csv` | Người và giờ OT theo trạng thái claim được API cung cấp |
+| `raw_attendance.jsonl` | Dữ liệu API theo ngày/hub để đối chiếu và tổng hợp lại |
+| `run_report.json` | Số ngày/hub thành công, thiếu trang, thất bại và lỗi khôi phục hub |
+
+Định nghĩa:
+
+- **Tổng người**: số mã nhân viên duy nhất được API attendance trả về cho ngày/hub đó,
+  không phải tổng biên chế nhân sự. Một người có nhiều ca vẫn tính một người; giờ các ca cộng lại.
+- **Đi làm**: có clock-in/clock-out, giờ làm thực tế dương hoặc trạng thái vào ca Early In / On Time / Late In.
+- **Vắng mặt**: không đi làm, không có nghỉ phép/ngày nghỉ, và có giờ kế hoạch dương hoặc trạng thái `Absence`.
+  Thiếu các bằng chứng này thì ghi `unknown`, không tự tính là vắng.
+- **Nghỉ phép**: có `sick_or_leave` hoặc `leave_status`; tên/trạng thái được giữ trong chi tiết.
+  **Ngày nghỉ** lấy từ `off_day_flag`. Hai cờ này có thể trùng với đi làm nếu làm một phần ngày;
+  không cộng các cột người này để suy ra tổng người.
+- **Claim OT**: `ot_applied > 0`. Tổng giờ yêu cầu lấy `ot_applied`; giờ OT thực làm lấy `ot_worked`.
+  Endpoint attendance hiện không trả trạng thái duyệt claim: ghi `status_not_provided`, không suy đoán
+  Pending/Approved từ số giờ hay kênh chấm công. Nếu API trả trạng thái thì giữ từng trạng thái.
+- **Giờ làm** lấy trực tiếp `actual_hours` dạng giờ thập phân. `9.2` giờ là 9 giờ 12 phút,
+  không phải 9 giờ 20 phút. Không lấy clock-out trừ clock-in để thay giờ thực tế.
+- **Thiếu giờ/trang**: kiểm tra `missing_actual_hours_rows`, `data_status`, `partial_days` và `failed_days`.
+  Ngày lấy lỗi để trống chỉ số; tổng cả kỳ là phần dữ liệu quan sát được, có thể thiếu nếu có lỗi.
+
+CSV dùng UTF-8 BOM để mở tiếng Việt trong Excel. Dữ liệu chi tiết/raw chứa thông tin nhân viên, được lưu trong `output`.
+Exit code: `0` đầy đủ; `1` thiếu dữ liệu/lỗi; `3` tác vụ khác đang giữ khóa; `130` người dùng dừng.
+
+Tổng hợp lại từ raw file mà không gọi API (chọn cùng ngày/hub đã lấy):
+
+```bat
+py -3.14 export_attendance_history.py --from-raw output\attendance\2026-09-05_2026-10-04\raw_attendance.jsonl --date-from 2026-09-05 --date-to 2026-10-04 --out-dir output\attendance\rebuild
+```

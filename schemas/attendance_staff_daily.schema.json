@@ -1,0 +1,177 @@
+[
+  {
+    "name": "date",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "station_id",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "station_name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "person_key",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "biz_staff_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "staff_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "staff_name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "agency",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "contract_type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "department_name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "attendance_state",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "has_leave",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "leave_status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "has_rest_day",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "is_late",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "claim_status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "has_ot_claim",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "record_count",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "actual_hours",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "planned_hours",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "break_time",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ot_applied",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ot_worked",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_actual_hours_rows",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_planned_hours_rows",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_identity",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_clock_in",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "missing_clock_out",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "first_clock_in",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "last_clock_out",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "clock_in_statuses",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "clock_out_statuses",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "clock_in_channels",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "clock_out_channels",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "data_status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
